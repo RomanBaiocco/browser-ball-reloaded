@@ -1,0 +1,15 @@
+{
+  "name": "browser-ball-reloaded",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "typescript": "^4.5.4",
+    "vite": "^2.8.0"
+  }
+}

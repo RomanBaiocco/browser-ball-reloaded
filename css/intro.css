@@ -1,0 +1,62 @@
+body {
+  background: #fff;
+  color: #000;
+  font: 13px/1.4 Georgia, Times, "Times New Roman", serif;
+  margin: 0;
+  padding: 0;
+}
+
+#header {
+  height: 90px;
+  left: 0;
+  padding: 10px 0 0 132px;
+  position: absolute;
+  top: 0;
+  width: 600px;
+}
+
+#title {
+  font-size: 48px;
+  line-height: 1;
+}
+
+#tagline {
+  font-size: 14px;
+  line-height: 1;
+}
+
+#content {
+  padding: 105px 15px 15px;
+  width: 600px;
+}
+
+#content p {
+  margin: 0 0 1.5em 0;
+}
+
+#footer {
+  border-top: 1px solid #6c6c6c;
+  margin: 15px;
+  width: 600px;
+}
+
+#launch {
+  background: #f00;
+  border: 3px solid #000;
+  color: #fff;
+  font-size: 36px;
+  padding: 0 5px;
+  text-decoration: none;
+}
+#launch:hover {
+  background: #f99;
+  color: #f00;
+}
+
+ul {
+  margin-top: 0;
+}
+
+canvas {
+  display: none;
+}
