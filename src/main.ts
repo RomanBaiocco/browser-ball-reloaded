@@ -2,13 +2,12 @@ import ballImage from "./ball.png";
 
 {
   var browserball = (function () {
-    var p = this,
-      q = false;
+    var q = false;
     var b = 1,
       a = 0.89,
       c = 0.97,
       s = 15;
-    var l = {
+    const ball = {
       dragging: true,
       img: new Image(),
       angle: 0,
@@ -38,19 +37,7 @@ import ballImage from "./ball.png";
         );
       },
     };
-    function d(v, x) {
-      for (var w = 0, u = v.length; w < u; w++) {
-        if (v[w] == x) {
-          return w;
-        }
-      }
-      return -1;
-    }
-    function j(u, v) {
-      if (d(u, v) == -1) {
-        u.push(v);
-      }
-    }
+
     var o = {
       x0: Infinity,
       y0: Infinity,
@@ -67,8 +54,8 @@ import ballImage from "./ball.png";
         }
         o.x0 = x;
         o.y0 = w;
-        l.x += v - x;
-        l.y += A - w;
+        ball.x += v - x;
+        ball.y += A - w;
       },
     };
     var e = {
@@ -99,7 +86,6 @@ import ballImage from "./ball.png";
       update: function () {
         var x,
           w,
-          v,
           u,
           y = e.list;
         e.corners = [];
@@ -169,7 +155,7 @@ import ballImage from "./ball.png";
             },
           ],
           A = null;
-        var v, u, x, w, D, B;
+        var v, u, x, D, B;
         for (v = 0; v < 4; v++) {
           for (u = (v + 1) % 4, x = 0; x < 2; u = (u + 2) % 4, x++) {
             A = e.sIntersection(E[v], C[u]);
@@ -298,11 +284,11 @@ import ballImage from "./ball.png";
           var A = z.target.ownerDocument.defaultView,
             w = A.screenX - o.x0 + z.clientX,
             B = A.screenY - o.y0 + z.clientY;
-          if (l.inside(w, B)) {
-            l.dragging = true;
-            l.rotation = 0;
-            l.drag_point.x = l.x - w;
-            l.drag_point.y = l.y - B;
+          if (ball.inside(w, B)) {
+            ball.dragging = true;
+            ball.rotation = 0;
+            ball.drag_point.x = ball.x - w;
+            ball.drag_point.y = ball.y - B;
             v = {
               x: 0,
               y: 0,
@@ -318,8 +304,8 @@ import ballImage from "./ball.png";
           var A = z.target.ownerDocument.defaultView,
             w = A.screenX - o.x0 + z.clientX,
             B = A.screenY - o.y0 + z.clientY;
-          l.x = w + l.drag_point.x;
-          l.y = B + l.drag_point.y;
+          ball.x = w + ball.drag_point.x;
+          ball.y = B + ball.drag_point.y;
           v.x = w - u.x;
           v.y = B - u.y;
           u.x = w;
@@ -327,13 +313,15 @@ import ballImage from "./ball.png";
         },
         up: function (w) {
           var x = w.target.ownerDocument.defaultView;
-          if (l.dragging && v) {
+          if (ball.dragging && v) {
             x.removeEventListener("mousemove", h.track, false);
-            l.velocity.x = Math.abs(v.x) > 20 ? (v.x < 0 ? -1 : 1) * 20 : v.x;
-            l.velocity.y = Math.abs(v.y) > 20 ? (v.y < 0 ? -1 : 1) * 20 : v.y;
+            ball.velocity.x =
+              Math.abs(v.x) > 20 ? (v.x < 0 ? -1 : 1) * 20 : v.x;
+            ball.velocity.y =
+              Math.abs(v.y) > 20 ? (v.y < 0 ? -1 : 1) * 20 : v.y;
             v = u = null;
-            l.drag_point.x = l.drag_point.y = 0;
-            l.dragging = false;
+            ball.drag_point.x = ball.drag_point.y = 0;
+            ball.dragging = false;
           }
         },
       };
@@ -351,7 +339,7 @@ import ballImage from "./ball.png";
       o.update();
       e.update();
     };
-    var r = function (y) {
+    var r = function () {
       var w = false,
         x;
       for (var v = 0, u = e.list.length; v < u; v++) {
@@ -372,7 +360,7 @@ import ballImage from "./ball.png";
         e.update();
       }
     };
-    var g = function (y) {
+    var g = function () {
       var x = "" + (window.screenY + 100),
         w = "" + (window.screenX - 200),
         u = "300",
@@ -391,52 +379,52 @@ import ballImage from "./ball.png";
       );
     };
     var m = function () {
-      l.dragging = true;
-      l.rotation = 0;
-      l.x = window.screenX - o.x0 + window.innerWidth / 2;
-      l.y = window.screenY - o.y0 + window.innerHeight / 2;
+      ball.dragging = true;
+      ball.rotation = 0;
+      ball.x = window.screenX - o.x0 + window.innerWidth / 2;
+      ball.y = window.screenY - o.y0 + window.innerHeight / 2;
     };
     var t = function () {
       var O = [],
         C = 1,
         A = 0;
       O.push(
-        l.w -
+        ball.w -
           e.sInside(
-            l.x - l.offset.x,
-            l.y - l.offset.y,
-            l.x + l.offset.x,
-            l.y - l.offset.y,
+            ball.x - ball.offset.x,
+            ball.y - ball.offset.y,
+            ball.x + ball.offset.x,
+            ball.y - ball.offset.y,
             e.list.slice(0)
           )
       );
       O.push(
-        l.h -
+        ball.h -
           e.sInside(
-            l.x + l.offset.x,
-            l.y - l.offset.y,
-            l.x + l.offset.x,
-            l.y + l.offset.y,
+            ball.x + ball.offset.x,
+            ball.y - ball.offset.y,
+            ball.x + ball.offset.x,
+            ball.y + ball.offset.y,
             e.list.slice(0)
           )
       );
       O.push(
-        l.w -
+        ball.w -
           e.sInside(
-            l.x - l.offset.x,
-            l.y + l.offset.y,
-            l.x + l.offset.x,
-            l.y + l.offset.y,
+            ball.x - ball.offset.x,
+            ball.y + ball.offset.y,
+            ball.x + ball.offset.x,
+            ball.y + ball.offset.y,
             e.list.slice(0)
           )
       );
       O.push(
-        l.h -
+        ball.h -
           e.sInside(
-            l.x - l.offset.x,
-            l.y - l.offset.y,
-            l.x - l.offset.x,
-            l.y + l.offset.y,
+            ball.x - ball.offset.x,
+            ball.y - ball.offset.y,
+            ball.x - ball.offset.x,
+            ball.y + ball.offset.y,
             e.list.slice(0)
           )
       );
@@ -448,11 +436,11 @@ import ballImage from "./ball.png";
           N,
           I = 0;
         for (var K = 0; K < 4; K++) {
-          if (O[K] == l.w) {
+          if (O[K] == ball.w) {
             v = O[(K + 3) % 4];
-            v = v == l.w ? 0 : v;
+            v = v == ball.w ? 0 : v;
             N = O[(K + 1) % 4];
-            N = N == l.w ? 0 : N;
+            N = N == ball.w ? 0 : N;
             M = v > N ? v : N;
             if (M > J) {
               J = M;
@@ -463,87 +451,84 @@ import ballImage from "./ball.png";
           }
         }
         if (J && Q == C) {
-          l.x -= J * (l.velocity.x < 0 ? -1 : 1);
-          l.y -=
-            Math.round((J * l.velocity.y) / l.velocity.x) *
-            (l.velocity.y < 0 ? -1 : 1);
-          l.velocity.x = -l.velocity.x * a;
-          l.velocity.y = l.velocity.y * c;
-          l.rotation = l.velocity.y * 0.015;
+          ball.x -= J * (ball.velocity.x < 0 ? -1 : 1);
+          ball.y -=
+            Math.round((J * ball.velocity.y) / ball.velocity.x) *
+            (ball.velocity.y < 0 ? -1 : 1);
+          ball.velocity.x = -ball.velocity.x * a;
+          ball.velocity.y = ball.velocity.y * c;
+          ball.rotation = ball.velocity.y * 0.015;
         } else {
           if (J && Q == A) {
-            if (l.velocity.y > 1) {
-              l.x -=
-                Math.round((J * l.velocity.x) / l.velocity.y) *
-                (l.velocity.x < 0 ? -1 : 1);
+            if (ball.velocity.y > 1) {
+              ball.x -=
+                Math.round((J * ball.velocity.x) / ball.velocity.y) *
+                (ball.velocity.x < 0 ? -1 : 1);
             }
-            l.y -= J * (l.velocity.y < 0 ? -1 : 1);
-            l.velocity.x = l.velocity.x * c;
-            l.velocity.y = -l.velocity.y * a;
-            l.rotation = l.velocity.x * 0.015;
+            ball.y -= J * (ball.velocity.y < 0 ? -1 : 1);
+            ball.velocity.x = ball.velocity.x * c;
+            ball.velocity.y = -ball.velocity.y * a;
+            ball.rotation = ball.velocity.x * 0.015;
           } else {
             var u,
               D = Number.POSITIVE_INFINITY,
               S,
-              T,
               P = -1,
               G = e.corners;
             for (var K = 0, L = G.length; K < L; K++) {
               S = {
-                x: l.x - G[K].x,
-                y: l.y - G[K].y,
+                x: ball.x - G[K].x,
+                y: ball.y - G[K].y,
               };
               u = Math.sqrt(S.x * S.x + S.y * S.y);
               if (u < D) {
                 P = K;
-                T = {
-                  x: S.x,
-                  y: S.y,
-                };
                 D = u;
               }
             }
             if (P >= 0 && I != 3) {
-              var R = G[P].dx > 0 ? l.x > G[P].x : l.x < G[P].x,
-                H = G[P].dy > 0 ? l.y > G[P].y : l.y < G[P].y,
+              var R = G[P].dx > 0 ? ball.x > G[P].x : ball.x < G[P].x,
+                H = G[P].dy > 0 ? ball.y > G[P].y : ball.y < G[P].y,
                 w;
               if ((R && !H) || (H && !R)) {
                 if (R) {
-                  w = l.radius - Math.abs(l.y - G[P].y);
-                  if (l.velocity.y > 1) {
-                    l.x -=
-                      Math.round((w * l.velocity.x) / l.velocity.y) *
-                      (l.velocity.x < 0 ? -1 : 1);
+                  w = ball.radius - Math.abs(ball.y - G[P].y);
+                  if (ball.velocity.y > 1) {
+                    ball.x -=
+                      Math.round((w * ball.velocity.x) / ball.velocity.y) *
+                      (ball.velocity.x < 0 ? -1 : 1);
                   }
-                  l.y -= w * (l.velocity.y < 0 ? -1 : 1);
-                  l.velocity.x = l.velocity.x * c;
-                  l.velocity.y = -l.velocity.y * a;
-                  l.rotation = l.velocity.x * 0.015;
+                  ball.y -= w * (ball.velocity.y < 0 ? -1 : 1);
+                  ball.velocity.x = ball.velocity.x * c;
+                  ball.velocity.y = -ball.velocity.y * a;
+                  ball.rotation = ball.velocity.x * 0.015;
                 } else {
-                  w = l.radius - Math.abs(l.x - G[P].x);
-                  l.x -= w * (l.velocity.x < 0 ? -1 : 1);
-                  l.y -=
-                    Math.round((w * l.velocity.y) / l.velocity.x) *
-                    (l.velocity.y < 0 ? -1 : 1);
-                  l.velocity.x = -l.velocity.x * a;
-                  l.velocity.y = l.velocity.y * c;
-                  l.rotation = l.velocity.y * 0.015;
+                  w = ball.radius - Math.abs(ball.x - G[P].x);
+                  ball.x -= w * (ball.velocity.x < 0 ? -1 : 1);
+                  ball.y -=
+                    Math.round((w * ball.velocity.y) / ball.velocity.x) *
+                    (ball.velocity.y < 0 ? -1 : 1);
+                  ball.velocity.x = -ball.velocity.x * a;
+                  ball.velocity.y = ball.velocity.y * c;
+                  ball.rotation = ball.velocity.y * 0.015;
                 }
               } else {
-                if (D < l.radius) {
-                  var F = l.velocity.x,
-                    E = l.velocity.y,
+                if (D < ball.radius) {
+                  var F = ball.velocity.x,
+                    E = ball.velocity.y,
                     B,
                     z;
-                  w = (l.radius - D) / Math.sqrt(F * F + E * E);
-                  l.x -= Math.round(F * w);
-                  l.y -= Math.round(E * w * (E < 0 ? -1 : 1));
+                  w = (ball.radius - D) / Math.sqrt(F * F + E * E);
+                  ball.x -= Math.round(F * w);
+                  ball.y -= Math.round(E * w * (E < 0 ? -1 : 1));
                   B = (G[P].dx < 0 && F > 0) || (G[P].dx > 0 && F < 0) ? 1 : -1;
                   z = (G[P].dy < 0 && E > 0) || (G[P].dy > 0 && E < 0) ? 1 : -1;
-                  l.velocity.x = B == -1 && z == -1 ? E * a * -G[P].dx : F * B;
-                  l.velocity.y =
+                  ball.velocity.x =
+                    B == -1 && z == -1 ? E * a * -G[P].dx : F * B;
+                  ball.velocity.y =
                     B == -1 && z == -1 ? F * a * -G[P].dy : E * a * z;
-                  l.rotation = l.velocity.x * 0.015 + l.velocity.y * 0.015;
+                  ball.rotation =
+                    ball.velocity.x * 0.015 + ball.velocity.y * 0.015;
                 }
               }
             }
@@ -551,48 +536,51 @@ import ballImage from "./ball.png";
         }
       }
     };
+
     var f = function () {
       var z, w, y, x;
-      if (!l.dragging) {
-        l.velocity.y += b;
-        if (Math.abs(l.velocity.x) < 1) {
-          l.velocity.x = 0;
+      if (!ball.dragging) {
+        ball.velocity.y += b;
+        if (Math.abs(ball.velocity.x) < 1) {
+          ball.velocity.x = 0;
         }
-        if (Math.abs(l.velocity.y) < 1) {
-          l.velocity.y = 0;
+        if (Math.abs(ball.velocity.y) < 1) {
+          ball.velocity.y = 0;
         }
-        l.x = l.x + Math.round(l.velocity.x);
-        l.y = l.y + Math.round(l.velocity.y);
+        ball.x = ball.x + Math.round(ball.velocity.x);
+        ball.y = ball.y + Math.round(ball.velocity.y);
         t();
       }
       for (var v = 0, u = e.list.length; v < u; v++) {
         z = e.list[v].ref;
         w = e.list[v].context;
-        y = l.x - (z.screenX - o.x0);
-        x = l.y - (z.screenY - o.y0);
+        y = ball.x - (z.screenX - o.x0);
+        x = ball.y - (z.screenY - o.y0);
         w.save();
         w.clearRect(0, 0, z.innerWidth, z.innerHeight);
         w.translate(y, x);
-        l.angle += l.rotation;
-        w.rotate(l.angle);
-        w.drawImage(l.img, -l.offset.x, -l.offset.y, l.w, l.h);
+        ball.angle += ball.rotation;
+        w.rotate(ball.angle);
+        w.drawImage(ball.img, -ball.offset.x, -ball.offset.y, ball.w, ball.h);
         w.restore();
       }
     };
-    var k = function (u) {
+
+    var k = function () {
       var v = e.list
         .map(function (w) {
           return w.ref;
         })
         .splice(1);
-      for (i = 0, len = v.length; i < len; i++) {
+      for (let i = 0, len = v.length; i < len; i++) {
         v[i].close();
       }
       self.removeEventListener("resize", n, false);
       self.removeEventListener("mousedown", h.down, false);
       self.removeEventListener("mouseup", h.up, false);
-      l.img = null;
+      ball.img = null;
     };
+
     return {
       init: function () {
         var u = document.getElementById
@@ -624,19 +612,20 @@ import ballImage from "./ball.png";
           q = true;
         }
         e.add(self);
-        l.w *= l.scale;
-        l.h *= l.scale;
-        l.offset.x = l.radius = l.w / 2;
-        l.offset.y = l.h / 2;
-        l.x = window.innerWidth / 2;
-        l.y = window.innerHeight / 2;
-        l.img.onload = function () {
+        ball.w *= ball.scale;
+        ball.h *= ball.scale;
+        ball.offset.x = ball.radius = ball.w / 2;
+        ball.offset.y = ball.h / 2;
+        ball.x = window.innerWidth / 2;
+        ball.y = window.innerHeight / 2;
+        ball.img.onload = function () {
           setInterval(f, s);
         };
-        l.img.src = ballImage;
+        ball.img.src = ballImage;
         setInterval(r, 250);
         v = null;
       },
+
       addChild: function (v) {
         var u = v.document.getElementById("stage");
         u.width = v.innerWidth;
@@ -652,7 +641,8 @@ import ballImage from "./ball.png";
         e.add(v);
         v = null;
       },
-      removeChild: function (w) {
+
+      removeChild: function () {
         var u = this.quad_ref,
           v = e.remove(u);
         v.removeEventListener("resize", n, false);

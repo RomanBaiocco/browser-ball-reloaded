@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "types": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/node": "^20.11.19",
