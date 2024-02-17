@@ -1,5 +1,12 @@
 import ballImage from "./ball.png";
 
+type BrowserballWindow = Window &
+  typeof globalThis & {
+    ref: Window;
+    canvas: HTMLCanvasElement | null;
+    context: CanvasRenderingContext2D | null;
+  };
+
 {
   var browserball = (function () {
     var q = false;
@@ -47,8 +54,8 @@ import ballImage from "./ball.png";
           v = o.x0,
           A = o.y0,
           z;
-        for (var y = 0, u = e.list.length; y < u; y++) {
-          z = e.list[y].ref;
+        for (var y = 0, u = windows.list.length; y < u; y++) {
+          z = windows.list[y].ref;
           x = x < z.screenX ? x : z.screenX;
           w = w < z.screenY ? w : z.screenY;
         }
@@ -58,28 +65,32 @@ import ballImage from "./ball.png";
         ball.y += A - w;
       },
     };
-    var e = {
-      list: [],
+    var windows = {
+      list: [] as BrowserballWindow[],
       corners: [],
-      add: function (u) {
-        u.quad_ref = e.list.length;
+      add: function (newWindow: BrowserballWindow) {
+        newWindow.quad_ref = windows.list.length;
+        const canvas = newWindow.document.getElementById(
+          "stage"
+        ) as HTMLCanvasElement;
+
         this.list.push({
-          ref: u,
-          canvas: u.document.getElementById("stage"),
-          context: u.document.getElementById("stage").getContext("2d"),
-          x1: u.screenX - o.x0,
-          y1: u.screenY - o.y0,
-          x2: u.screenX + u.innerWidth - o.x0,
-          y2: u.screenY + u.innerHeight - o.y0,
+          ref: newWindow,
+          canvas: canvas,
+          context: canvas.getContext("2d"),
+          x1: newWindow.screenX - o.x0,
+          y1: newWindow.screenY - o.y0,
+          x2: newWindow.screenX + newWindow.innerWidth - o.x0,
+          y2: newWindow.screenY + newWindow.innerHeight - o.y0,
         });
         o.update();
-        e.update();
+        windows.update();
       },
       remove: function (v) {
-        var x = e.list.splice(v, 1)[0];
+        var x = windows.list.splice(v, 1)[0];
         x.canvas = x.context = null;
-        for (var w = 0, u = e.list.length; w < u; w++) {
-          e.list[w].ref.quad_ref = w;
+        for (var w = 0, u = windows.list.length; w < u; w++) {
+          windows.list[w].ref.quad_ref = w;
         }
         return x.ref;
       },
@@ -87,8 +98,8 @@ import ballImage from "./ball.png";
         var x,
           w,
           u,
-          y = e.list;
-        e.corners = [];
+          y = windows.list;
+        windows.corners = [];
         for (x = 0, u = y.length; x < u; x++) {
           y[x].x1 = y[x].ref.screenX - o.x0;
           y[x].y1 = y[x].ref.screenY - o.y0;
@@ -97,7 +108,7 @@ import ballImage from "./ball.png";
         }
         for (x = 0; x < u - 1; x++) {
           for (w = x + 1; w < u; w++) {
-            e.findWorldCorners(y[x], y[w]);
+            windows.findWorldCorners(y[x], y[w]);
           }
         }
       },
@@ -158,8 +169,8 @@ import ballImage from "./ball.png";
         var v, u, x, D, B;
         for (v = 0; v < 4; v++) {
           for (u = (v + 1) % 4, x = 0; x < 2; u = (u + 2) % 4, x++) {
-            A = e.sIntersection(E[v], C[u]);
-            if (A && !e.pInsideAny(A.x, A.y)) {
+            A = windows.sIntersection(E[v], C[u]);
+            if (A && !windows.pInsideAny(A.x, A.y)) {
               D = 0;
               B = 0;
               if (E[v].x1 == E[v].x2) {
@@ -169,7 +180,7 @@ import ballImage from "./ball.png";
                 (D = C[u].y1 < C[u].y2 ? 1 : -1),
                   (B = E[v].x1 < E[v].x2 ? -1 : 1);
               }
-              e.corners.push({
+              windows.corners.push({
                 x: A.x,
                 y: A.y,
                 dx: D,
@@ -239,34 +250,38 @@ import ballImage from "./ball.png";
       },
       pInsideAny: function (w, A) {
         var v = false;
-        for (var z = 0, u = e.list.length; z < u && !v; z++) {
-          v = e.pInsideNotEdge(w, A, e.list[z]);
+        for (var z = 0, u = windows.list.length; z < u && !v; z++) {
+          v = windows.pInsideNotEdge(w, A, windows.list[z]);
         }
         return v;
       },
       sInside: function (v, B, u, A) {
         let p2;
         var C = (p2 = false),
-          z = e.list,
+          z = windows.list,
           w = 0;
         for (var x = 0, y = z.length; x < y && !w; x++) {
-          C = e.pInside(v, B, z[x]);
-          p2 = e.pInside(u, A, z[x]);
+          C = windows.pInside(v, B, z[x]);
+          p2 = windows.pInside(u, A, z[x]);
           if (C && p2) {
             return v == u ? A - B : u - v;
           } else {
             if (C && !p2) {
               if (v == u) {
-                return z[x].y2 - B + 1 + e.sInside(v, z[x].y2 + 1, u, A);
+                return z[x].y2 - B + 1 + windows.sInside(v, z[x].y2 + 1, u, A);
               } else {
-                return z[x].x2 - v + 1 + e.sInside(z[x].x2 + 1, B, u, A);
+                return z[x].x2 - v + 1 + windows.sInside(z[x].x2 + 1, B, u, A);
               }
             } else {
               if (!C && p2) {
                 if (v == u) {
-                  return A - z[x].y1 + 1 + e.sInside(v, B, u, z[x].y1 - 1);
+                  return (
+                    A - z[x].y1 + 1 + windows.sInside(v, B, u, z[x].y1 - 1)
+                  );
                 } else {
-                  return u - z[x].x1 + 1 + e.sInside(v, B, z[x].x1 - 1, A);
+                  return (
+                    u - z[x].x1 + 1 + windows.sInside(v, B, z[x].x1 - 1, A)
+                  );
                 }
               } else {
               }
@@ -328,7 +343,7 @@ import ballImage from "./ball.png";
     })();
     var n = function (w) {
       var x = w.target.defaultView || w.target,
-        u = e.list[x.quad_ref],
+        u = windows.list[x.quad_ref],
         v = u.canvas;
       v.width = x.innerWidth;
       v.height = x.innerHeight;
@@ -337,37 +352,38 @@ import ballImage from "./ball.png";
         x.screenY = x.screenTop;
       }
       o.update();
-      e.update();
+      windows.update();
     };
     var r = function () {
       var w = false,
         x;
-      for (var v = 0, u = e.list.length; v < u; v++) {
-        x = e.list[v].ref;
+      for (var v = 0, u = windows.list.length; v < u; v++) {
+        x = windows.list[v].ref;
         if (q) {
           x.screenX = x.screenLeft;
           x.screenY = x.screenTop;
         }
         if (
-          e.list[v].x1 != x.screenX - o.x0 ||
-          e.list[v].y1 != x.screenY - o.y0
+          windows.list[v].x1 != x.screenX - o.x0 ||
+          windows.list[v].y1 != x.screenY - o.y0
         ) {
           w = true;
         }
       }
       if (w) {
         o.update();
-        e.update();
+        windows.update();
       }
     };
-    var g = function () {
+
+    var createChild = function () {
       var x = "" + (window.screenY + 100),
         w = "" + (window.screenX - 200),
         u = "300",
         v = "300";
       window.open(
         "child.html",
-        "w" + e.list.length,
+        "w" + windows.list.length,
         "location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=" +
           v +
           ",height=" +
@@ -378,54 +394,56 @@ import ballImage from "./ball.png";
           x
       );
     };
-    var m = function () {
+
+    const resetBall = function () {
       ball.dragging = true;
       ball.rotation = 0;
       ball.x = window.screenX - o.x0 + window.innerWidth / 2;
       ball.y = window.screenY - o.y0 + window.innerHeight / 2;
     };
+
     var t = function () {
       var O = [],
         C = 1,
         A = 0;
       O.push(
         ball.w -
-          e.sInside(
+          windows.sInside(
             ball.x - ball.offset.x,
             ball.y - ball.offset.y,
             ball.x + ball.offset.x,
             ball.y - ball.offset.y,
-            e.list.slice(0)
+            windows.list.slice(0)
           )
       );
       O.push(
         ball.h -
-          e.sInside(
+          windows.sInside(
             ball.x + ball.offset.x,
             ball.y - ball.offset.y,
             ball.x + ball.offset.x,
             ball.y + ball.offset.y,
-            e.list.slice(0)
+            windows.list.slice(0)
           )
       );
       O.push(
         ball.w -
-          e.sInside(
+          windows.sInside(
             ball.x - ball.offset.x,
             ball.y + ball.offset.y,
             ball.x + ball.offset.x,
             ball.y + ball.offset.y,
-            e.list.slice(0)
+            windows.list.slice(0)
           )
       );
       O.push(
         ball.h -
-          e.sInside(
+          windows.sInside(
             ball.x - ball.offset.x,
             ball.y - ball.offset.y,
             ball.x - ball.offset.x,
             ball.y + ball.offset.y,
-            e.list.slice(0)
+            windows.list.slice(0)
           )
       );
       if (!!O[0] || !!O[1] || !!O[2] || !!O[3]) {
@@ -474,7 +492,7 @@ import ballImage from "./ball.png";
               D = Number.POSITIVE_INFINITY,
               S,
               P = -1,
-              G = e.corners;
+              G = windows.corners;
             for (var K = 0, L = G.length; K < L; K++) {
               S = {
                 x: ball.x - G[K].x,
@@ -551,9 +569,9 @@ import ballImage from "./ball.png";
         ball.y = ball.y + Math.round(ball.velocity.y);
         t();
       }
-      for (var v = 0, u = e.list.length; v < u; v++) {
-        z = e.list[v].ref;
-        w = e.list[v].context;
+      for (var v = 0, u = windows.list.length; v < u; v++) {
+        z = windows.list[v].ref;
+        w = windows.list[v].context;
         y = ball.x - (z.screenX - o.x0);
         x = ball.y - (z.screenY - o.y0);
         w.save();
@@ -566,52 +584,61 @@ import ballImage from "./ball.png";
       }
     };
 
-    var k = function () {
-      var v = e.list
-        .map(function (w) {
-          return w.ref;
-        })
-        .splice(1);
-      for (let i = 0, len = v.length; i < len; i++) {
-        v[i].close();
+    var cleanup = function () {
+      const [_parentRef, ...windowRefs] = windows.list.map((w) => {
+        console.log({ ref: w.ref });
+        return w.ref;
+      });
+
+      for (let i = 0, len = windowRefs.length; i < len; i++) {
+        windowRefs[i].close();
       }
       self.removeEventListener("resize", n, false);
       self.removeEventListener("mousedown", h.down, false);
       self.removeEventListener("mouseup", h.up, false);
-      ball.img = null;
     };
 
     return {
       init: function () {
-        var u = document.getElementById
-          ? document.getElementById("stage")
+        const parentWindowStage = document.getElementById
+          ? (document.getElementById("stage") as HTMLCanvasElement)
           : null;
-        if (!u || !u.getContext) {
-          return;
-        }
-        u.width = window.innerWidth;
-        u.height = window.innerHeight;
+        if (!parentWindowStage || !parentWindowStage.getContext)
+          throw new Error("Canvas not found or not supported");
+
+        parentWindowStage.width = window.innerWidth;
+        parentWindowStage.height = window.innerHeight;
+
+        // Add event listeners
         window.addEventListener("resize", n, false);
         window.addEventListener("mousedown", h.down, false);
         window.addEventListener("mouseup", h.up, false);
-        window.onunload = k;
-        var v = document.createElement("a");
-        v.appendChild(document.createTextNode("Create Window"));
-        v.className = "child";
-        document.body.appendChild(v);
-        v.addEventListener("click", g, false);
-        v = document.createElement("a");
-        v.appendChild(document.createTextNode("Reset Ball"));
-        v.className = "reset";
-        document.body.appendChild(v);
-        v.addEventListener("click", m, false);
-        v = null;
+        window.onunload = cleanup;
+
+        // Create buttons
+        const createWindowButton = document.createElement("a");
+        createWindowButton.appendChild(
+          document.createTextNode("Create Window")
+        );
+        createWindowButton.className = "child";
+        document.body.appendChild(createWindowButton);
+        createWindowButton.addEventListener("click", createChild, false);
+
+        const resetBallButton = document.createElement("a");
+        resetBallButton.appendChild(document.createTextNode("Reset Ball"));
+        resetBallButton.className = "reset";
+        document.body.appendChild(resetBallButton);
+        resetBallButton.addEventListener("click", resetBall, false);
+
+        // Add parent to list of windows
         if (window.screenX === undefined) {
           window.screenX = window.screenLeft;
           window.screenY = window.screenTop;
           q = true;
         }
-        e.add(self);
+        windows.add(self as BrowserballWindow);
+
+        // Initialize ball
         ball.w *= ball.scale;
         ball.h *= ball.scale;
         ball.offset.x = ball.radius = ball.w / 2;
@@ -623,28 +650,35 @@ import ballImage from "./ball.png";
         };
         ball.img.src = ballImage;
         setInterval(r, 250);
-        v = null;
       },
 
-      addChild: function (v) {
-        var u = v.document.getElementById("stage");
-        u.width = v.innerWidth;
-        u.height = v.innerHeight;
-        v.addEventListener("resize", n, false);
-        v.addEventListener("mousedown", h.down, false);
-        v.addEventListener("mouseup", h.up, false);
-        v.onunload = this.removeChild;
+      addChild: function (childWindow: BrowserballWindow) {
+        const childStage = childWindow.document.getElementById(
+          "stage"
+        ) as HTMLCanvasElement | null;
+        if (!childStage || !childStage.getContext)
+          throw new Error("Canvas not found or not supported");
+
+        childStage.width = childWindow.innerWidth;
+        childStage.height = childWindow.innerHeight;
+
+        // Add event listeners
+        childWindow.addEventListener("resize", n, false);
+        childWindow.addEventListener("mousedown", h.down, false);
+        childWindow.addEventListener("mouseup", h.up, false);
+        childWindow.onunload = this.removeChild;
+
+        // Add child to list of windows
         if (q) {
-          v.screenX = v.screenLeft;
-          v.screenY = v.screenTop;
+          childWindow.screenX = childWindow.screenLeft;
+          childWindow.screenY = childWindow.screenTop;
         }
-        e.add(v);
-        v = null;
+        windows.add(childWindow);
       },
 
       removeChild: function () {
         var u = this.quad_ref,
-          v = e.remove(u);
+          v = windows.remove(u);
         v.removeEventListener("resize", n, false);
         v.removeEventListener("mousedown", h.down, false);
         v.removeEventListener("mouseup", h.up, false);
