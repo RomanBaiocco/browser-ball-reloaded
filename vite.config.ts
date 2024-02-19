@@ -1,9 +1,14 @@
-import { resolve } from "path";
-import { defineConfig, ConfigEnv, UserConfigExport } from "vite";
-
 // https://vitejs.dev/config/
 
+import { resolve } from "path";
+import { defineConfig } from "vite";
+
+if (process.env.GITHUB_PAGES === "true") {
+  console.log("Production build");
+}
+
 export default defineConfig({
+  base: process.env.GITHUB_PAGES === "true" ? "/browser-ball-reloaded/" : "/",
   build: {
     rollupOptions: {
       input: {
