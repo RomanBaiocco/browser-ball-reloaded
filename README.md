@@ -1,4 +1,4 @@
-# browser-ball-reloaded
+# [browser-ball-reloaded](https://romanbaiocco.github.io/browser-ball-reloaded/)
 
 A rewrite of [Browser Ball by Mark Mahoney](https://experiments.withgoogle.com/browser-ball) (that is currently a work in progress)
 
