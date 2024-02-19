@@ -577,11 +577,11 @@ const ROTATION_FACTOR = 0.015;
               ball.velocity.x =
                 !isBallMovingAwayFromCornerX && !isBallMovingAwayFromCornerY
                   ? currentBallVeloictyY * BOUNCE_DECAY * -closestCorner.dx
-                  : currentBallVeloictyX * -1;
+                  : currentBallVeloictyX * (isBallMovingAwayFromCornerX ? 1 : -1);
               ball.velocity.y =
                 !isBallMovingAwayFromCornerX && !isBallMovingAwayFromCornerY
                   ? currentBallVeloictyX * BOUNCE_DECAY * -closestCorner.dy
-                  : currentBallVeloictyY * BOUNCE_DECAY * -1;
+                  : currentBallVeloictyY * BOUNCE_DECAY * (isBallMovingAwayFromCornerY ? 1 : -1);
 
               ball.rotation = ball.velocity.x * ROTATION_FACTOR + ball.velocity.y * ROTATION_FACTOR;
             }
