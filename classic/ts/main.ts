@@ -1,4 +1,4 @@
-import ballImage from "./ball.png";
+import ballImage from "../ball.png";
 import { INTERSECTION_INDEXES } from "./intersectionIndexes";
 
 type BrowserBallWindow = Window &

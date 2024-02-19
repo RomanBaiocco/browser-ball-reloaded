@@ -13,8 +13,12 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, "index.html"),
-        parent: resolve(__dirname, "parent.html"),
-        child: resolve(__dirname, "child.html"),
+        parent: resolve(__dirname, "/reloaded/parent.html"),
+        child: resolve(__dirname, "/reloaded/child.html"),
+
+        classicMain: resolve(__dirname, "/classic/index.html"),
+        classicParent: resolve(__dirname, "/classic/parent.html"),
+        classicChild: resolve(__dirname, "/classic/child.html"),
       },
     },
   },

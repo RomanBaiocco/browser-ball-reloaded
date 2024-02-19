@@ -1,0 +1,37 @@
+html,
+body {
+  background: #fff;
+  color: #000;
+  font: 12px/1.2 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 0;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+body a {
+  background: #ccc;
+  border: 2px solid #333;
+  color: #000;
+  cursor: pointer;
+  left: 10px;
+  line-height: 1;
+  padding: 5px;
+  position: absolute;
+  text-decoration: none;
+}
+a.child {
+  top: 10px;
+}
+a.reset {
+  top: 45px;
+}
+
+body p {
+  line-height: 1.2;
+  margin: 0;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  width: 200px;
+}

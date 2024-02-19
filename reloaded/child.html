@@ -1,0 +1,13 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Browser Ball: Child Window</title>
+    <link
+      rel="stylesheet"
+      href="./css/main.css"
+    />
+  </head>
+  <body class="child" onload="console.log({window});window.opener.browserball.addChild(this);">
+    <canvas id="stage"></canvas>
+  </body>
+</html>
