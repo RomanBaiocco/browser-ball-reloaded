@@ -1,4 +1,5 @@
 import { Ball } from "./ball";
+import { BALL_TYPES } from "./ballTypes";
 import { BrowserBallWindow, Corner, Point, Quad, Vector } from "./geometry";
 import { INTERSECTION_INDEXES } from "./intersectionIndexes";
 
@@ -106,6 +107,9 @@ export class World {
       }
     });
   };
+  pointInsideAnyQuad = (point: Point) => {
+    return this.quads.some((quad) => quad.pointInsideNotEdge(point));
+  };
 
   /**
    * Checks if the world has been updated and updates the reference point and quads if it has
@@ -122,16 +126,6 @@ export class World {
       this.updateQuads();
     }
   };
-
-  pointInsideAnyQuad = (point: Point) => {
-    return this.quads.some((quad) => quad.pointInsideNotEdge(point));
-  };
-
-  // Ball stuff
-  ball: Ball = new Ball(this);
-  ballDraggingManager = new BallDraggingManager(this.ball, this);
-
-  // Event listeners
   onResizeWindow = (e: Event) => {
     const resizedWindow = e.target as BrowserBallWindow;
     const resizedWindowCanvas = this.quads.at(resizedWindow.quadRef)?.canvas;
@@ -144,7 +138,6 @@ export class World {
     this.updateQuads();
   };
 
-  // Button onClick handlers
   createChild = () => {
     window.open(
       "child.html",
@@ -154,7 +147,29 @@ export class World {
       },height=${CHILD_DIMENSIONS.childHeight},left=${window.screenX - 200},top=${window.screenY + 100}`
     );
   };
+  initChild = (childWindow: BrowserBallWindow) => {
+    const childWindowStage = childWindow.document.getElementById("stage") as HTMLCanvasElement | null;
+    if (!childWindowStage || !childWindowStage.getContext) throw new Error("Canvas not found or not supported");
 
+    childWindowStage.width = CHILD_DIMENSIONS.childWidth;
+    childWindowStage.height = CHILD_DIMENSIONS.childHeight;
+
+    childWindow.addEventListener("resize", this.onResizeWindow, false);
+    childWindow.addEventListener("mousedown", this.ballDraggingManager.down, false);
+    childWindow.addEventListener("mouseup", this.ballDraggingManager.up, false);
+
+    this.addQuad(childWindow);
+    childWindow.onbeforeunload = () => this.removeChild(childWindow);
+  };
+  removeChild = (childWindow: BrowserBallWindow) => {
+    this.removeQuad(childWindow.quadRef);
+    childWindow.removeEventListener("resize", this.onResizeWindow, false);
+    childWindow.removeEventListener("mousedown", this.ballDraggingManager.down, false);
+    childWindow.removeEventListener("mouseup", this.ballDraggingManager.up, false);
+  };
+
+  ball: Ball = new Ball(this);
+  ballDraggingManager = new BallDraggingManager(this.ball, this);
   /**
    * Resets the ball to the center of the parent window
    */
@@ -165,6 +180,27 @@ export class World {
       window.screenX - this.referencePoint.x + window.innerWidth / 2,
       window.screenY - this.referencePoint.y + window.innerHeight / 2
     );
+  };
+
+  settingsWindow: Window | null = null;
+  openBallSettings = () =>
+    window.open(
+      "settings.html",
+      "settings",
+      "location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=150,height=300"
+    );
+  initBallSettings = (settingsWindow: Window) => {
+    this.settingsWindow = settingsWindow;
+    const buttonContainer = settingsWindow.document.createElement("div");
+    buttonContainer.className = "buttonContainer";
+    settingsWindow.document.body.appendChild(buttonContainer);
+
+    BALL_TYPES.forEach((ballType) => {
+      const setBallTypeButton = document.createElement("button");
+      setBallTypeButton.appendChild(document.createTextNode(ballType.name));
+      buttonContainer.appendChild(setBallTypeButton);
+      setBallTypeButton.addEventListener("click", () => this.ball.setBallType(ballType), false);
+    });
   };
 
   constructor() {
@@ -193,6 +229,12 @@ export class World {
     document.body.appendChild(resetBallButton);
     resetBallButton.addEventListener("click", this.resetBall, false);
 
+    const ballSettingsButton = document.createElement("a");
+    ballSettingsButton.appendChild(document.createTextNode("Settings"));
+    ballSettingsButton.className = "settings";
+    document.body.appendChild(ballSettingsButton);
+    ballSettingsButton.addEventListener("click", this.openBallSettings, false);
+
     this.addQuad(self as BrowserBallWindow);
     setInterval(this.checkForWorldUpdate, 250);
   }
@@ -207,29 +249,8 @@ export class World {
     self.removeEventListener("resize", this.onResizeWindow);
     self.removeEventListener("mousedown", this.ballDraggingManager.down);
     self.removeEventListener("mouseup", this.ballDraggingManager.up);
-  };
 
-  // Child window handlers
-  initChild = (childWindow: BrowserBallWindow) => {
-    const childWindowStage = childWindow.document.getElementById("stage") as HTMLCanvasElement | null;
-    if (!childWindowStage || !childWindowStage.getContext) throw new Error("Canvas not found or not supported");
-
-    childWindowStage.width = CHILD_DIMENSIONS.childWidth;
-    childWindowStage.height = CHILD_DIMENSIONS.childHeight;
-
-    childWindow.addEventListener("resize", this.onResizeWindow, false);
-    childWindow.addEventListener("mousedown", this.ballDraggingManager.down, false);
-    childWindow.addEventListener("mouseup", this.ballDraggingManager.up, false);
-
-    this.addQuad(childWindow);
-    childWindow.onbeforeunload = () => this.removeChild(childWindow);
-  };
-
-  removeChild = (childWindow: BrowserBallWindow) => {
-    this.removeQuad(childWindow.quadRef);
-    childWindow.removeEventListener("resize", this.onResizeWindow, false);
-    childWindow.removeEventListener("mousedown", this.ballDraggingManager.down, false);
-    childWindow.removeEventListener("mouseup", this.ballDraggingManager.up, false);
+    if (this.settingsWindow) this.settingsWindow.close();
   };
 }
 

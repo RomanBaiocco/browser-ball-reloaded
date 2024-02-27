@@ -26,6 +26,9 @@ a.child {
 a.reset {
   top: 45px;
 }
+a.settings {
+  top: 80px;
+}
 
 body p {
   line-height: 1.2;
@@ -34,4 +37,26 @@ body p {
   right: 10px;
   top: 10px;
   width: 200px;
+}
+
+.settingsPane {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+#ball-settings {
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  background: #ccc;
+  border: 2px solid #333;
+  color: #000;
+  cursor: pointer;
+  font: inherit;
+  line-height: 1;
+  padding: 5px;
+  text-decoration: none;
 }

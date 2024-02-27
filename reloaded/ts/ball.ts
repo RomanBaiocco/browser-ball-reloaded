@@ -1,14 +1,8 @@
-import ballImage from "../ball.png";
-
 import { Edge, Point, Vector } from "./geometry";
-import { World } from "./world";
+import type { World } from "./world";
+import { DEFAULT_BALL_TYPE, type BallType } from "./ballTypes";
 
 const RENDER_RATE_IN_MS = 15;
-
-const GRAVITY = 1;
-const BOUNCE_DECAY = 0.89;
-const ORTHOGINAL_VELOCITY_DECAY = 0.97;
-const ROTATION_FACTOR = 0.015;
 
 enum BallEdge {
   Top = "Top",
@@ -23,11 +17,15 @@ interface BallOptions {
 
 export class Ball {
   // Configurable properties
-  scale = 1;
+  gravity = DEFAULT_BALL_TYPE.gravity;
+  bounceDecay = DEFAULT_BALL_TYPE.bounceDecay;
+  orthoginalFriction = DEFAULT_BALL_TYPE.orthoginalFriction;
+  rotationFactor = DEFAULT_BALL_TYPE.rotationFactor;
+  scale = DEFAULT_BALL_TYPE.scale;
+  img = new Image();
 
   // State
   dragging = true;
-  img = new Image();
   angle = 0;
   rotation = 0;
   width = 90;
@@ -50,15 +48,14 @@ export class Ball {
       this.scale = options.scale;
     }
 
-    this.width *= this.scale;
-    this.height *= this.scale;
+    this.width = Math.round(this.width * this.scale);
+    this.height = Math.round(this.height * this.scale);
     this.radius = this.width / 2;
     this.offset = { x: this.width / 2, y: this.height / 2 };
     this.center = new Point(window.innerWidth / 2, window.innerHeight / 2);
-    this.img.onload = () => {
-      setInterval(this.renderBall, RENDER_RATE_IN_MS);
-    };
-    this.img.src = ballImage;
+    this.img.src = DEFAULT_BALL_TYPE.imgSrc;
+
+    setInterval(this.renderBall, RENDER_RATE_IN_MS);
   }
 
   inside = (p: Point) => {
@@ -82,10 +79,11 @@ export class Ball {
   };
 
   renderBall = () => {
+    console.debug({ ball: this });
     if (!this.dragging) {
-      this.velocity.y += GRAVITY;
-      if (Math.abs(this.velocity.x) < 1) this.velocity.x = 0;
-      if (Math.abs(this.velocity.y) < 1) this.velocity.y = 0;
+      this.velocity.y += this.gravity;
+      if (Math.abs(this.velocity.x) < Math.abs(this.gravity)) this.velocity.x = 0;
+      if (Math.abs(this.velocity.y) < Math.abs(this.gravity)) this.velocity.y = 0;
       this.center = new Point(this.center.x + Math.round(this.velocity.x), this.center.y + Math.round(this.velocity.y));
       this.handleCollision();
     }
@@ -199,14 +197,14 @@ export class Ball {
 
             this.velocity = new Vector(
               !isBallMovingAwayFromCornerX && !isBallMovingAwayFromCornerY
-                ? currentBallVeloicty.y * BOUNCE_DECAY * -closestCorner.dx
+                ? currentBallVeloicty.y * this.bounceDecay * -closestCorner.dx
                 : currentBallVeloicty.x * (isBallMovingAwayFromCornerX ? 1 : -1),
               !isBallMovingAwayFromCornerX && !isBallMovingAwayFromCornerY
-                ? currentBallVeloicty.x * BOUNCE_DECAY * -closestCorner.dy
-                : currentBallVeloicty.y * BOUNCE_DECAY * (isBallMovingAwayFromCornerY ? 1 : -1)
+                ? currentBallVeloicty.x * this.bounceDecay * -closestCorner.dy
+                : currentBallVeloicty.y * this.bounceDecay * (isBallMovingAwayFromCornerY ? 1 : -1)
             );
 
-            this.rotation = this.velocity.x * ROTATION_FACTOR + this.velocity.y * ROTATION_FACTOR;
+            this.rotation = this.velocity.x * this.rotationFactor + this.velocity.y * this.rotationFactor;
           }
         }
       }
@@ -223,21 +221,21 @@ export class Ball {
 
     this.center[collisionAxis] -= adjustment * (this.velocity[collisionAxis] < 0 ? -1 : 1);
     // Don't make this adjustment if the ball is moving vertically and is moving slowly
-    if (collisionAxis === "x" || this.velocity.y > 1) {
+    if (collisionAxis === "x" || Math.abs(this.velocity.y) > Math.abs(this.gravity)) {
       this.center[orthoganalAxis] -=
         Math.round((adjustment * this.velocity[orthoganalAxis]) / this.velocity[collisionAxis]) *
         (this.velocity[orthoganalAxis] < 0 ? -1 : 1);
     }
 
-    this.velocity[collisionAxis] = -this.velocity[collisionAxis] * BOUNCE_DECAY;
-    this.velocity[orthoganalAxis] = this.velocity[orthoganalAxis] * ORTHOGINAL_VELOCITY_DECAY;
-    this.rotation = this.velocity[orthoganalAxis] * ROTATION_FACTOR;
+    this.velocity[collisionAxis] = -this.velocity[collisionAxis] * this.bounceDecay;
+    this.velocity[orthoganalAxis] = this.velocity[orthoganalAxis] * this.orthoginalFriction;
+    this.rotation = this.velocity[orthoganalAxis] * this.rotationFactor;
   };
 
   /**
    * Recurrsively determines how much
    * @param edge The edge to check
-   * @returns 
+   * @returns
    */
   lengthOfEdgeInsideWorld = (edge: Edge): number => {
     for (const quad of this.world.quads) {
@@ -270,5 +268,21 @@ export class Ball {
     }
 
     return 0;
+  };
+
+  setBallType = (ballType: BallType) => {
+    this.gravity = ballType.gravity;
+    this.bounceDecay = ballType.bounceDecay;
+    this.orthoginalFriction = ballType.orthoginalFriction;
+    this.rotationFactor = ballType.rotationFactor;
+
+    const oldScale = this.scale;
+    this.scale = ballType.scale;
+    this.width = Math.round(this.width * (this.scale / oldScale));
+    this.height = Math.round(this.height * (this.scale / oldScale));
+    this.radius = this.width / 2;
+    this.offset = { x: this.width / 2, y: this.height / 2 };
+
+    this.img.src = ballType.imgSrc;
   };
 }
