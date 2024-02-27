@@ -142,13 +142,9 @@ export class Ball {
         }
       }
 
-      // console.log({ amountOfEdgeOutOfWindow, I: edgesAtLeastPartiallyInsideWindow });
-
       if (amountOfEdgeOutOfWindow && isSideCollision) {
-        // Handle hitting a side wall
         this.handleOrthoganalCollision("x", amountOfEdgeOutOfWindow);
       } else if (amountOfEdgeOutOfWindow && !isSideCollision) {
-        // Handle hitting a top or bottom wall
         this.handleOrthoganalCollision("y", amountOfEdgeOutOfWindow);
       } else if (edgesAtLeastPartiallyInsideWindow !== 3) {
         // Handle hitting a corner
@@ -174,42 +170,41 @@ export class Ball {
 
           if ((isBallInsideOfCornerX || isBallInsideOfCornerY) && !(isBallInsideOfCornerX && isBallInsideOfCornerY)) {
             if (isBallInsideOfCornerX) {
-              // Handle like it hit a top or bottom wall
               const verticalDistanceFromCorner = this.radius - Math.abs(this.center.y - closestCorner.y);
               this.handleOrthoganalCollision("y", verticalDistanceFromCorner);
             } else {
-              // Handle like it hit a left or right wall
               const horizontalDistanceFromCorner = this.radius - Math.abs(this.center.x - closestCorner.x);
               this.handleOrthoganalCollision("x", horizontalDistanceFromCorner);
             }
           } else if (distanceToClosestCorner < this.radius) {
             // Hit corner in a way that the ceneter of the ball is entirely inside or outside the corner
-            const currentBallVeloictyX = this.velocity.x;
-            const currentBallVeloictyY = this.velocity.y;
+            const currentBallVeloicty = this.velocity;
 
             const velocityAdjustmentFactor =
               (this.radius - distanceToClosestCorner) /
-              Math.sqrt(currentBallVeloictyX ** 2 + currentBallVeloictyY ** 2);
+              Math.sqrt(currentBallVeloicty.x ** 2 + currentBallVeloicty.y ** 2);
 
-            this.center.x -= Math.round(currentBallVeloictyX * velocityAdjustmentFactor);
+            this.center.x -= Math.round(currentBallVeloicty.x * velocityAdjustmentFactor);
             this.center.y -= Math.round(
-              currentBallVeloictyY * velocityAdjustmentFactor * (currentBallVeloictyY < 0 ? -1 : 1)
+              currentBallVeloicty.y * velocityAdjustmentFactor * (currentBallVeloicty.y < 0 ? -1 : 1)
             );
 
             const isBallMovingAwayFromCornerX =
-              (closestCorner.dx < 0 && currentBallVeloictyX > 0) || (closestCorner.dx > 0 && currentBallVeloictyX < 0);
+              (closestCorner.dx < 0 && currentBallVeloicty.x > 0) ||
+              (closestCorner.dx > 0 && currentBallVeloicty.x < 0);
 
             const isBallMovingAwayFromCornerY =
-              (closestCorner.dy < 0 && currentBallVeloictyY > 0) || (closestCorner.dy > 0 && currentBallVeloictyY < 0);
+              (closestCorner.dy < 0 && currentBallVeloicty.y > 0) ||
+              (closestCorner.dy > 0 && currentBallVeloicty.y < 0);
 
-            this.velocity.x =
+            this.velocity = new Vector(
               !isBallMovingAwayFromCornerX && !isBallMovingAwayFromCornerY
-                ? currentBallVeloictyY * BOUNCE_DECAY * -closestCorner.dx
-                : currentBallVeloictyX * (isBallMovingAwayFromCornerX ? 1 : -1);
-            this.velocity.y =
+                ? currentBallVeloicty.y * BOUNCE_DECAY * -closestCorner.dx
+                : currentBallVeloicty.x * (isBallMovingAwayFromCornerX ? 1 : -1),
               !isBallMovingAwayFromCornerX && !isBallMovingAwayFromCornerY
-                ? currentBallVeloictyX * BOUNCE_DECAY * -closestCorner.dy
-                : currentBallVeloictyY * BOUNCE_DECAY * (isBallMovingAwayFromCornerY ? 1 : -1);
+                ? currentBallVeloicty.x * BOUNCE_DECAY * -closestCorner.dy
+                : currentBallVeloicty.y * BOUNCE_DECAY * (isBallMovingAwayFromCornerY ? 1 : -1)
+            );
 
             this.rotation = this.velocity.x * ROTATION_FACTOR + this.velocity.y * ROTATION_FACTOR;
           }
@@ -218,6 +213,32 @@ export class Ball {
     }
   };
 
+  /**
+   * Handles a collision with a wall
+   * @param { "x" | "y" } direction - The direction of the collision
+   **/
+  handleOrthoganalCollision = (direction: "x" | "y", adjustment: number) => {
+    const collisionAxis = direction;
+    const orthoganalAxis = direction === "x" ? "y" : "x";
+
+    this.center[collisionAxis] -= adjustment * (this.velocity[collisionAxis] < 0 ? -1 : 1);
+    // Don't make this adjustment if the ball is moving vertically and is moving slowly
+    if (collisionAxis === "x" || this.velocity.y > 1) {
+      this.center[orthoganalAxis] -=
+        Math.round((adjustment * this.velocity[orthoganalAxis]) / this.velocity[collisionAxis]) *
+        (this.velocity[orthoganalAxis] < 0 ? -1 : 1);
+    }
+
+    this.velocity[collisionAxis] = -this.velocity[collisionAxis] * BOUNCE_DECAY;
+    this.velocity[orthoganalAxis] = this.velocity[orthoganalAxis] * ORTHOGINAL_VELOCITY_DECAY;
+    this.rotation = this.velocity[orthoganalAxis] * ROTATION_FACTOR;
+  };
+
+  /**
+   * Recurrsively determines how much
+   * @param edge The edge to check
+   * @returns 
+   */
   lengthOfEdgeInsideWorld = (edge: Edge): number => {
     for (const quad of this.world.quads) {
       const isPoint1InsideQuad = quad.pointInside(edge.point1);
@@ -249,25 +270,5 @@ export class Ball {
     }
 
     return 0;
-  };
-
-  /**
-   * @param { "x" | "y" } direction - The direction of the collision
-   **/
-  handleOrthoganalCollision = (direction: "x" | "y", adjustment: number) => {
-    const collisionAxis = direction;
-    const orthoganalAxis = direction === "x" ? "y" : "x";
-
-    this.center[collisionAxis] -= adjustment * (this.velocity[collisionAxis] < 0 ? -1 : 1);
-    // Don't make this adjustment if the ball is moving vertically and is moving slowly
-    if (collisionAxis === "x" || this.velocity.y > 1) {
-      this.center[orthoganalAxis] -=
-        Math.round((adjustment * this.velocity[orthoganalAxis]) / this.velocity[collisionAxis]) *
-        (this.velocity[orthoganalAxis] < 0 ? -1 : 1);
-    }
-
-    this.velocity[collisionAxis] = -this.velocity[collisionAxis] * BOUNCE_DECAY;
-    this.velocity[orthoganalAxis] = this.velocity[orthoganalAxis] * ORTHOGINAL_VELOCITY_DECAY;
-    this.rotation = this.velocity[orthoganalAxis] * ROTATION_FACTOR;
   };
 }

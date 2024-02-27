@@ -13,14 +13,7 @@
         window.open(
           "reloaded/parent.html",
           null,
-          "location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=" +
-            width +
-            ",height=" +
-            height +
-            ",left=" +
-            left +
-            ",top=" +
-            top
+          `location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=${width},height=${height},left=${left},top=${top}`
         );
         return false;
       }
@@ -52,15 +45,12 @@
         remastered.
       </p>
       <p>
-        <a href="./classic/index.html"
-          >If you'd like to see the original Browser Ball preserved in all its glory, you can view it here</a
-        >
+        <a href="./classic/index.html">
+          If you'd like to see the original Browser Ball preserved in all its glory, you can view it here
+        </a>
       </p>
 
-      <h3>
-        Below are the instructions for how to play, they will prbably be moved to inside of the launched window itself
-        for a better user experience.
-      </h3>
+      <h3>Instructions</h3>
       <p>Clicking the link below spawns the main Browser Ball window, which features two buttons:</p>
       <ol>
         <li>

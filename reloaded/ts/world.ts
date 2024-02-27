@@ -27,9 +27,18 @@ export class World {
     this.ball.center.y += oldPoint.y - this.referencePoint.y;
   };
 
-  // Windows stuff
+  /**
+   * An array of quads representing the windows in the world
+   */
   quads = [] as Quad[];
+  /**
+   * An array of corners representing the corners of the world
+   */
   corners = [] as Corner[];
+  /**
+   * Adds a new quad to the world
+   * @param newWindow The window that contains the quad
+   */
   addQuad = (newWindow: BrowserBallWindow) => {
     newWindow.quadRef = this.quads.length;
 
@@ -38,6 +47,10 @@ export class World {
     this.updateReferencePoint();
     this.updateQuads();
   };
+  /**
+   * Removes a quad from the world
+   * @param indexToRemove The index of the quad to remove
+   */
   removeQuad = (indexToRemove: number) => {
     const [removedWindow] = this.quads.splice(indexToRemove, 1);
 
@@ -45,35 +58,34 @@ export class World {
 
     return removedWindow.windowRef;
   };
+  /**
+   * Updates each quad's position and updates the corners array
+   */
   updateQuads = () => {
-    // Clear the corners array
     this.corners = [];
-
-    // Update the position of each quad relative to the top-left corner of the world
     this.quads.forEach((quad) => quad.updatePosition(this.referencePoint));
 
     // Loop through each pair of windows and find their corners and add them to the corners array
     this.quads.forEach((quad1, quad1Index) => {
       for (let quad2Index = quad1Index + 1; quad2Index < this.quads.length; quad2Index++) {
-        this.updateWorldCorners(quad1, this.quads[quad2Index]);
+        this.corners = [...this.corners, ...this.findWorldCorners(quad1, this.quads[quad2Index])];
       }
     });
   };
-  updateWorldCorners = (quad1: Quad, quad2: Quad) => {
+  /**
+   * Given two quads, find the corners of the world that are created by the intersection of the quads.
+   * An intersection is only a wolrd corner if it is not inside any of the other quads.
+   * @param quad1 The first quad
+   * @param quad2 The second quad
+   */
+  findWorldCorners = (quad1: Quad, quad2: Quad) => {
     const quad1Edges = quad1.edges();
     const quad2Edges = quad2.edges();
 
-    console.log(2);
-
-    INTERSECTION_INDEXES.forEach(([q1I, q2I]) => {
+    return INTERSECTION_INDEXES.flatMap(([q1I, q2I]) => {
       const quad1Edge = quad1Edges[q1I];
       const quad2Edge = quad2Edges[q2I];
       const intersection = quad1Edge.getIntersection(quad2Edge);
-
-      if (intersection) {
-
-        console.log(intersection, this.pointInsideAnyQuad(intersection));
-      }
 
       if (intersection && !this.pointInsideAnyQuad(intersection)) {
         let dx = 0;
@@ -87,19 +99,17 @@ export class World {
           dx = quad2Edge.point1.y < quad2Edge.point2.y ? 1 : -1;
           dy = quad1Edge.point1.x < quad1Edge.point2.x ? -1 : 1;
         }
-        
-        console.log(4);
 
-        this.corners.push({
-          x: intersection.x,
-          y: intersection.y,
-          dx,
-          dy,
-        });
+        return new Corner(intersection.x, intersection.y, dx, dy);
+      } else {
+        return [];
       }
     });
   };
 
+  /**
+   * Checks if the world has been updated and updates the reference point and quads if it has
+   */
   checkForWorldUpdate = () => {
     const worldShouldUpdate = this.quads.some(
       (quad) =>
@@ -114,7 +124,7 @@ export class World {
   };
 
   pointInsideAnyQuad = (point: Point) => {
-    return this.quads.some((quad) => quad.pointInside(point));
+    return this.quads.some((quad) => quad.pointInsideNotEdge(point));
   };
 
   // Ball stuff
@@ -134,15 +144,6 @@ export class World {
     this.updateQuads();
   };
 
-  cleanup = () => {
-    const [_parentRef, ...windowRefs] = this.quads.map((quad) => quad.windowRef);
-    windowRefs.forEach((w) => w.close());
-
-    self.removeEventListener("resize", this.onResizeWindow);
-    self.removeEventListener("mousedown", this.ballDraggingManager.down);
-    self.removeEventListener("mouseup", this.ballDraggingManager.up);
-  };
-
   // Button onClick handlers
   createChild = () => {
     window.open(
@@ -154,6 +155,9 @@ export class World {
     );
   };
 
+  /**
+   * Resets the ball to the center of the parent window
+   */
   resetBall = () => {
     this.ball.dragging = true;
     this.ball.rotation = 0;
@@ -193,6 +197,19 @@ export class World {
     setInterval(this.checkForWorldUpdate, 250);
   }
 
+  /**
+   * Cleans up the world after the parent window is closed by closing all the child windows
+   */
+  cleanup = () => {
+    const [_parentWindowRef, ...windowRefs] = this.quads.map((quad) => quad.windowRef);
+    windowRefs.forEach((w) => w.close());
+
+    self.removeEventListener("resize", this.onResizeWindow);
+    self.removeEventListener("mousedown", this.ballDraggingManager.down);
+    self.removeEventListener("mouseup", this.ballDraggingManager.up);
+  };
+
+  // Child window handlers
   initChild = (childWindow: BrowserBallWindow) => {
     const childWindowStage = childWindow.document.getElementById("stage") as HTMLCanvasElement | null;
     if (!childWindowStage || !childWindowStage.getContext) throw new Error("Canvas not found or not supported");

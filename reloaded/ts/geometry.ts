@@ -9,8 +9,8 @@ export class Point {
     this.y = y;
   }
 
-  add(point: Point) {
-    return new Point(this.x + point.x, this.y + point.y);
+  translate(vector: Vector) {
+    return new Point(this.x + vector.x, this.y + vector.y);
   }
 }
 
@@ -21,10 +21,6 @@ export class Vector {
   constructor(x: number, y: number) {
     this.x = x;
     this.y = y;
-  }
-
-  add(vector: Vector) {
-    return new Vector(this.x + vector.x, this.y + vector.y);
   }
 }
 
@@ -44,7 +40,7 @@ export class Edge {
    * @returns a new edge
    */
   static fromPointAndVector(point: Point, vector: Vector) {
-    return new Edge(point, point.add(vector));
+    return new Edge(point, point.translate(vector));
   }
 
   /**
@@ -137,7 +133,10 @@ export class Quad {
     const context = canvas.getContext("2d");
     if (!context) throw new Error("Canvas context not found");
 
-    const topLeftCorner = new Point(windowRef.screenX - world.referencePoint.x, windowRef.screenY - world.referencePoint.y);
+    const topLeftCorner = new Point(
+      windowRef.screenX - world.referencePoint.x,
+      windowRef.screenY - world.referencePoint.y
+    );
     const bottomRightCorner = new Point(
       windowRef.screenX + windowRef.innerWidth - world.referencePoint.x,
       windowRef.screenY + windowRef.innerHeight - world.referencePoint.y
