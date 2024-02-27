@@ -39,10 +39,15 @@ body p {
   width: 200px;
 }
 
-.buttonContainer {
+.settingsPane {
+  height: 100dvh;
   display: flex;
   flex-direction: column;
-  height: 100%;
+}
+
+#ball-settings {
+  display: flex;
+  flex-direction: column;
 }
 
 button {

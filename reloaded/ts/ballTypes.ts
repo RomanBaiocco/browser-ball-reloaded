@@ -66,4 +66,4 @@ export const BALL_TYPES: BallType[] = [
   },
 ];
 
-export const DEFAULT_BALL_TYPE = BALL_TYPES[4];
+export const DEFAULT_BALL_TYPE = BALL_TYPES[0];

@@ -79,10 +79,11 @@ export class Ball {
   };
 
   renderBall = () => {
+    console.debug({ ball: this });
     if (!this.dragging) {
       this.velocity.y += this.gravity;
-      if (Math.abs(this.velocity.x) < this.gravity) this.velocity.x = 0;
-      if (Math.abs(this.velocity.y) < this.gravity) this.velocity.y = 0;
+      if (Math.abs(this.velocity.x) < Math.abs(this.gravity)) this.velocity.x = 0;
+      if (Math.abs(this.velocity.y) < Math.abs(this.gravity)) this.velocity.y = 0;
       this.center = new Point(this.center.x + Math.round(this.velocity.x), this.center.y + Math.round(this.velocity.y));
       this.handleCollision();
     }
@@ -220,7 +221,7 @@ export class Ball {
 
     this.center[collisionAxis] -= adjustment * (this.velocity[collisionAxis] < 0 ? -1 : 1);
     // Don't make this adjustment if the ball is moving vertically and is moving slowly
-    if (collisionAxis === "x" || this.velocity.y > this.gravity) {
+    if (collisionAxis === "x" || Math.abs(this.velocity.y) > Math.abs(this.gravity)) {
       this.center[orthoganalAxis] -=
         Math.round((adjustment * this.velocity[orthoganalAxis]) / this.velocity[collisionAxis]) *
         (this.velocity[orthoganalAxis] < 0 ? -1 : 1);
