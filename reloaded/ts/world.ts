@@ -186,8 +186,8 @@ export class World {
   openBallSettings = () =>
     window.open(
       "settings.html",
-      `w${-1}`,
-      `location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=150,height=300`
+      "settings",
+      "location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=150,height=300"
     );
   initBallSettings = (settingsWindow: Window) => {
     this.settingsWindow = settingsWindow;
@@ -230,7 +230,7 @@ export class World {
     resetBallButton.addEventListener("click", this.resetBall, false);
 
     const ballSettingsButton = document.createElement("a");
-    ballSettingsButton.appendChild(document.createTextNode("Ball Settings"));
+    ballSettingsButton.appendChild(document.createTextNode("Settings"));
     ballSettingsButton.className = "settings";
     document.body.appendChild(ballSettingsButton);
     ballSettingsButton.addEventListener("click", this.openBallSettings, false);

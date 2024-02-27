@@ -48,8 +48,8 @@ export class Ball {
       this.scale = options.scale;
     }
 
-    this.width *= this.scale;
-    this.height *= this.scale;
+    this.width = Math.round(this.width * this.scale);
+    this.height = Math.round(this.height * this.scale);
     this.radius = this.width / 2;
     this.offset = { x: this.width / 2, y: this.height / 2 };
     this.center = new Point(window.innerWidth / 2, window.innerHeight / 2);
@@ -81,8 +81,8 @@ export class Ball {
   renderBall = () => {
     if (!this.dragging) {
       this.velocity.y += this.gravity;
-      if (Math.abs(this.velocity.x) < 1) this.velocity.x = 0;
-      if (Math.abs(this.velocity.y) < 1) this.velocity.y = 0;
+      if (Math.abs(this.velocity.x) < this.gravity) this.velocity.x = 0;
+      if (Math.abs(this.velocity.y) < this.gravity) this.velocity.y = 0;
       this.center = new Point(this.center.x + Math.round(this.velocity.x), this.center.y + Math.round(this.velocity.y));
       this.handleCollision();
     }
@@ -140,13 +140,10 @@ export class Ball {
       }
 
       if (amountOfEdgeOutOfWindow && isSideCollision) {
-        console.log("1");
         this.handleOrthoganalCollision("x", amountOfEdgeOutOfWindow);
       } else if (amountOfEdgeOutOfWindow && !isSideCollision) {
-        console.log("2");
         this.handleOrthoganalCollision("y", amountOfEdgeOutOfWindow);
       } else if (edgesAtLeastPartiallyInsideWindow !== 3) {
-        console.log("3");
         // Handle hitting a corner
         const { closestCornerIndex, distanceToClosestCorner } = this.world.corners.reduce(
           (acc, corner, cornerIndex) => {
@@ -223,7 +220,7 @@ export class Ball {
 
     this.center[collisionAxis] -= adjustment * (this.velocity[collisionAxis] < 0 ? -1 : 1);
     // Don't make this adjustment if the ball is moving vertically and is moving slowly
-    if (collisionAxis === "x" || this.velocity.y > 1) {
+    if (collisionAxis === "x" || this.velocity.y > this.gravity) {
       this.center[orthoganalAxis] -=
         Math.round((adjustment * this.velocity[orthoganalAxis]) / this.velocity[collisionAxis]) *
         (this.velocity[orthoganalAxis] < 0 ? -1 : 1);
@@ -280,11 +277,11 @@ export class Ball {
 
     const oldScale = this.scale;
     this.scale = ballType.scale;
-    this.width *= this.scale / oldScale;
-    this.height *= this.scale / oldScale;
-    this.img.src = ballType.imgSrc;
+    this.width = Math.round(this.width * (this.scale / oldScale));
+    this.height = Math.round(this.height * (this.scale / oldScale));
+    this.radius = this.width / 2;
+    this.offset = { x: this.width / 2, y: this.height / 2 };
 
-    console.log("Ball type set to", ballType.name);
-    console.log({ ball: this });
+    this.img.src = ballType.imgSrc;
   };
 }
