@@ -189,16 +189,15 @@ export class World {
       "settings",
       "location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=150,height=300"
     );
-  initBallSettings = (settingsWindow: Window) => {
+  initSettings = (settingsWindow: Window) => {
     this.settingsWindow = settingsWindow;
-    const buttonContainer = settingsWindow.document.createElement("div");
-    buttonContainer.className = "buttonContainer";
-    settingsWindow.document.body.appendChild(buttonContainer);
+    const ballSettings = settingsWindow.document.getElementById("ball-settings");
+    if (!ballSettings) throw new Error("Ball settings not found");
 
     BALL_TYPES.forEach((ballType) => {
-      const setBallTypeButton = document.createElement("button");
-      setBallTypeButton.appendChild(document.createTextNode(ballType.name));
-      buttonContainer.appendChild(setBallTypeButton);
+      const setBallTypeButton = settingsWindow.document.createElement("button");
+      setBallTypeButton.appendChild(settingsWindow.document.createTextNode(ballType.name));
+      ballSettings.appendChild(setBallTypeButton);
       setBallTypeButton.addEventListener("click", () => this.ball.setBallType(ballType), false);
     });
   };
