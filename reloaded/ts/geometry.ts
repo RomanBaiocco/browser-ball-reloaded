@@ -122,7 +122,7 @@ export type BrowserBallWindow = Window &
 
 interface QuadProps {
   windowRef: BrowserBallWindow;
-  worldReference: World["referencePoint"];
+  world: World;
 }
 
 export class Quad {
@@ -132,15 +132,15 @@ export class Quad {
   topLeftCorner: Point;
   bottomRightCorner: Point;
 
-  constructor({ windowRef, worldReference }: QuadProps) {
+  constructor({ windowRef, world }: QuadProps) {
     const canvas = windowRef.document.getElementById("stage") as HTMLCanvasElement;
     const context = canvas.getContext("2d");
     if (!context) throw new Error("Canvas context not found");
 
-    const topLeftCorner = new Point(windowRef.screenX - worldReference.x, windowRef.screenY - worldReference.y);
+    const topLeftCorner = new Point(windowRef.screenX - world.referencePoint.x, windowRef.screenY - world.referencePoint.y);
     const bottomRightCorner = new Point(
-      windowRef.screenX + windowRef.innerWidth - worldReference.x,
-      windowRef.screenY + windowRef.innerHeight - worldReference.y
+      windowRef.screenX + windowRef.innerWidth - world.referencePoint.x,
+      windowRef.screenY + windowRef.innerHeight - world.referencePoint.y
     );
 
     this.windowRef = windowRef;

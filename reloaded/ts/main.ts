@@ -1,5 +1,6 @@
 import ballImage from "../ball.png";
 import { INTERSECTION_INDEXES } from "./intersectionIndexes";
+import { World } from "./world";
 
 type BrowserBallWindow = Window &
   typeof globalThis & {
@@ -310,6 +311,7 @@ const ROTATION_FACTOR = 0.015;
         return null;
       },
 
+      // Quad.pointInside
       pInside: function (point: Point, quad: BrowserBallQuad) {
         return !!(
           point.x >= quad.topLeftCorner.x &&
@@ -319,6 +321,7 @@ const ROTATION_FACTOR = 0.015;
         );
       },
 
+      // Quad.pointInsideNotEdge
       pInsideNotEdge: function (point: Point, quad: BrowserBallQuad) {
         return !!(
           point.x > quad.topLeftCorner.x &&
@@ -328,11 +331,12 @@ const ROTATION_FACTOR = 0.015;
         );
       },
 
+      // World.pointInsideAnyQuad
       pInsideAny: function (point: Point) {
         return quads.list.some((quad) => quads.pInsideNotEdge(point, quad));
       },
 
-      // Todo this more readable
+      // Ball.lengthOfEdgeOutsideWorld
       sInside: function (point1: Point, point2: Point): number {
         const edge = { point1, point2 };
 
@@ -720,7 +724,8 @@ const ROTATION_FACTOR = 0.015;
 
 // @ts-expect-error
 window.browserball = browserball;
-browserball.init();
+// new World();
+// browserball.init();
 
 // Helper functions I added to make the code more readable
 function normalizeEdge(edge: Edge) {
