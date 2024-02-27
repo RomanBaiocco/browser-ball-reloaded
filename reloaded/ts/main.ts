@@ -377,7 +377,7 @@ const ROTATION_FACTOR = 0.015;
 
     const ballDraggingManager = (function () {
       let velocity: Vector | null = null;
-      let lastDragPoint: Point | null = null;
+      let lastDragPoint: Point | null = null; 
 
       return {
         down: function (event: MouseEvent) {
