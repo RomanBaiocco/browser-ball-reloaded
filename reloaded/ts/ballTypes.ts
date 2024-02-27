@@ -2,7 +2,6 @@ import defaultBallImage from "../assets/ball.png";
 import bowlingBallImage from "../assets/bowling_ball.png";
 import tennisBallImage from "../assets/tennis_ball.png";
 import poolBallImage from "../assets/pool_ball.png";
-import superBallImage from "../assets/super_ball.webp";
 import antiGravityBallImage from "../assets/anti-gravity_ball.webp";
 
 export type BallType = {
