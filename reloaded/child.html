@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>Browser Ball: Child Window</title>
-    <link
-      rel="stylesheet"
-      href="./css/main.css"
-    />
+    <link rel="stylesheet" href="./css/main.css" />
   </head>
-  <body class="child" onload="console.log({window});window.opener.browserball.addChild(this);">
+  <body class="child">
     <canvas id="stage"></canvas>
   </body>
+  <script type="module">
+    window.opener.browserBallWorld.initChild(window);
+  </script>
 </html>
