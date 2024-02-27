@@ -15,6 +15,7 @@ export default defineConfig({
         main: resolve(__dirname, "index.html"),
         parent: resolve(__dirname, "/reloaded/parent.html"),
         child: resolve(__dirname, "/reloaded/child.html"),
+        ballSettings: resolve(__dirname, "/reloaded/ballSettings.html"),
 
         classicMain: resolve(__dirname, "/classic/index.html"),
         classicParent: resolve(__dirname, "/classic/parent.html"),
