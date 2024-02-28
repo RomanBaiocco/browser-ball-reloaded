@@ -2,8 +2,6 @@ import { Edge, Point, Vector } from "./geometry";
 import type { World } from "./world";
 import { DEFAULT_BALL_TYPE, type BallType } from "./ballTypes";
 
-const RENDER_RATE_IN_MS = 15;
-
 enum BallEdge {
   Top = "Top",
   Right = "Right",
@@ -54,8 +52,6 @@ export class Ball {
     this.offset = { x: this.width / 2, y: this.height / 2 };
     this.center = new Point(window.innerWidth / 2, window.innerHeight / 2);
     this.img.src = DEFAULT_BALL_TYPE.imgSrc;
-
-    setInterval(this.renderBall, RENDER_RATE_IN_MS);
   }
 
   inside = (p: Point) => {
@@ -79,7 +75,6 @@ export class Ball {
   };
 
   renderBall = () => {
-    console.debug({ ball: this });
     if (!this.dragging) {
       this.velocity.y += this.gravity;
       if (Math.abs(this.velocity.x) < Math.abs(this.gravity)) this.velocity.x = 0;
@@ -90,19 +85,19 @@ export class Ball {
 
     this.world.quads.forEach((quad) => {
       const windowRef = quad.windowRef;
-      const windowContext = quad.context;
-      if (!windowContext) throw new Error("renderBall: CanvasRenderingContext2D not found");
+      const canvasContext = quad.context;
+      if (!canvasContext) throw new Error("renderBall: CanvasRenderingContext2D not found");
 
       const xTranslation = this.center.x - (windowRef.screenX - this.world.referencePoint.x);
       const yTranslation = this.center.y - (windowRef.screenY - this.world.referencePoint.y);
 
-      windowContext.save();
-      windowContext.clearRect(0, 0, windowRef.innerWidth, windowRef.innerHeight);
-      windowContext.translate(xTranslation, yTranslation);
+      canvasContext.save();
+      // windowContext.clearRect(0, 0, windowRef.innerWidth, windowRef.innerHeight);
+      canvasContext.translate(xTranslation, yTranslation);
       this.angle += this.rotation;
-      windowContext.rotate(this.angle);
-      windowContext.drawImage(this.img, -this.offset.x, -this.offset.y, this.width, this.height);
-      windowContext.restore();
+      canvasContext.rotate(this.angle);
+      canvasContext.drawImage(this.img, -this.offset.x, -this.offset.y, this.width, this.height);
+      canvasContext.restore();
     });
   };
 

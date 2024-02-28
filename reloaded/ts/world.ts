@@ -3,6 +3,8 @@ import { BALL_TYPES } from "./ballTypes";
 import { BrowserBallWindow, Corner, Point, Quad, Vector } from "./geometry";
 import { INTERSECTION_INDEXES } from "./intersectionIndexes";
 
+const RENDER_RATE_IN_MS = 15;
+
 const CHILD_DIMENSIONS = {
   childWidth: 300,
   childHeight: 300,
@@ -202,6 +204,26 @@ export class World {
     });
   };
 
+  backgroundImageDataUrl: string | null = null;
+  setBackground = (event: Event) => {
+    const files = (event.target as HTMLInputElement).files;
+    if (!files) return;
+
+    if (files.length === 0) return;
+    if (files.length > 1) throw new Error("setBackground: Only one file can be selected");
+
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result;
+      if (typeof result !== "string") throw new Error("setBackground: result is not a string");
+
+      this.backgroundImageDataUrl = result;
+      console.log("setBackground: this.backgroundImageDataUrl", this.backgroundImageDataUrl);
+    };
+    reader.readAsDataURL(file);
+  };
+
   constructor() {
     const parentWindowStage = document.getElementById("stage") as HTMLCanvasElement | null;
     if (!parentWindowStage || !parentWindowStage.getContext) throw new Error("Canvas not found or not supported");
@@ -236,7 +258,25 @@ export class World {
 
     this.addQuad(self as BrowserBallWindow);
     setInterval(this.checkForWorldUpdate, 250);
+    setInterval(this.render, RENDER_RATE_IN_MS);
   }
+
+  render = () => {
+    this.quads.forEach((quad) => this.drawBackground(quad));
+    this.ball.renderBall();
+  };
+  backgroundImg: HTMLImageElement | null = null;
+  drawBackground = (quad: Quad) => {
+    const canvas = quad.canvas;
+    const context = quad.context;
+
+    if (this.backgroundImageDataUrl) {
+      console.debug("drawBackground: image");
+      const img = new Image();
+      img.src = this.backgroundImageDataUrl;
+      context.drawImage(img, 0, 0, canvas.width, canvas.height);
+    }
+  };
 
   /**
    * Cleans up the world after the parent window is closed by closing all the child windows
