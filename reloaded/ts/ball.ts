@@ -92,7 +92,6 @@ export class Ball {
       const yTranslation = this.center.y - (windowRef.screenY - this.world.referencePoint.y);
 
       canvasContext.save();
-      // windowContext.clearRect(0, 0, windowRef.innerWidth, windowRef.innerHeight);
       canvasContext.translate(xTranslation, yTranslation);
       this.angle += this.rotation;
       canvasContext.rotate(this.angle);

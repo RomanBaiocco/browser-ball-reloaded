@@ -193,6 +193,11 @@ export class World {
     );
   initSettings = (settingsWindow: Window) => {
     this.settingsWindow = settingsWindow;
+
+    const backgroundInput = settingsWindow.document.getElementById("background-input");
+    if (!backgroundInput) throw new Error("Background input not found");
+    backgroundInput.addEventListener("change", this.setBackground, false);
+
     const ballSettings = settingsWindow.document.getElementById("ball-settings");
     if (!ballSettings) throw new Error("Ball settings not found");
 
@@ -262,7 +267,11 @@ export class World {
   }
 
   render = () => {
-    this.quads.forEach((quad) => this.drawBackground(quad));
+    this.quads.forEach((quad) => {
+      quad.context.clearRect(0, 0, quad.windowRef.innerWidth, quad.windowRef.innerHeight);
+
+      this.drawBackground(quad);
+    });
     this.ball.renderBall();
   };
   backgroundImg: HTMLImageElement | null = null;
