@@ -2,8 +2,6 @@ import { Edge, Point, Vector } from "./geometry";
 import type { World } from "./world";
 import { DEFAULT_BALL_TYPE, type BallType } from "./ballTypes";
 
-const RENDER_RATE_IN_MS = 15;
-
 enum BallEdge {
   Top = "Top",
   Right = "Right",
@@ -11,17 +9,13 @@ enum BallEdge {
   Left = "Left",
 }
 
-interface BallOptions {
-  scale?: number;
-}
-
 export class Ball {
   // Configurable properties
-  gravity = DEFAULT_BALL_TYPE.gravity;
-  bounceDecay = DEFAULT_BALL_TYPE.bounceDecay;
-  orthoginalFriction = DEFAULT_BALL_TYPE.orthoginalFriction;
-  rotationFactor = DEFAULT_BALL_TYPE.rotationFactor;
-  scale = DEFAULT_BALL_TYPE.scale;
+  gravity;
+  bounceDecay;
+  orthoginalFriction;
+  rotationFactor;
+  scale;
   img = new Image();
 
   // State
@@ -41,21 +35,21 @@ export class Ball {
 
   world: World;
 
-  constructor(world: World, options: BallOptions = {}) {
+  constructor(world: World, ballType: BallType = DEFAULT_BALL_TYPE) {
     this.world = world;
 
-    if (options.scale) {
-      this.scale = options.scale;
-    }
+    this.gravity = ballType.gravity;
+    this.bounceDecay = ballType.bounceDecay;
+    this.orthoginalFriction = ballType.orthoginalFriction;
+    this.rotationFactor = ballType.rotationFactor;
+    this.scale = ballType.scale;
+    this.img.src = ballType.imgSrc;
 
     this.width = Math.round(this.width * this.scale);
     this.height = Math.round(this.height * this.scale);
     this.radius = this.width / 2;
     this.offset = { x: this.width / 2, y: this.height / 2 };
     this.center = new Point(window.innerWidth / 2, window.innerHeight / 2);
-    this.img.src = DEFAULT_BALL_TYPE.imgSrc;
-
-    setInterval(this.renderBall, RENDER_RATE_IN_MS);
   }
 
   inside = (p: Point) => {
@@ -78,8 +72,13 @@ export class Ball {
     };
   };
 
-  renderBall = () => {
-    console.debug({ ball: this });
+  updatePosition = (oldWorldReference: Point, newWorldReference: Point) => {
+    this.center.x += oldWorldReference.x - newWorldReference.x;
+    this.center.y += oldWorldReference.y - newWorldReference.y;
+  };
+
+  render = () => {
+    // console.debug({ ball: this });
     if (!this.dragging) {
       this.velocity.y += this.gravity;
       if (Math.abs(this.velocity.x) < Math.abs(this.gravity)) this.velocity.x = 0;
@@ -93,15 +92,30 @@ export class Ball {
       const windowContext = quad.context;
       if (!windowContext) throw new Error("renderBall: CanvasRenderingContext2D not found");
 
+      const rotationCanvasContext = this.world.rotationCanvas.getContext("2d");
+      if (!rotationCanvasContext) throw new Error("renderBall: rotation CanvasRenderingContext2D not found");
+
+      this.world.rotationCanvas.width = this.width;
+      this.world.rotationCanvas.height = this.height;
+      this.angle += this.rotation;
+
+      rotationCanvasContext.clearRect(0, 0, this.world.rotationCanvas.width, this.world.rotationCanvas.height);
+
+      rotationCanvasContext.translate(this.offset.x, this.offset.y);
+      rotationCanvasContext.rotate(this.angle);
+      rotationCanvasContext.drawImage(this.img, -this.offset.x, -this.offset.y, this.width, this.height);
+
       const xTranslation = this.center.x - (windowRef.screenX - this.world.referencePoint.x);
       const yTranslation = this.center.y - (windowRef.screenY - this.world.referencePoint.y);
 
       windowContext.save();
-      windowContext.clearRect(0, 0, windowRef.innerWidth, windowRef.innerHeight);
-      windowContext.translate(xTranslation, yTranslation);
-      this.angle += this.rotation;
-      windowContext.rotate(this.angle);
-      windowContext.drawImage(this.img, -this.offset.x, -this.offset.y, this.width, this.height);
+      windowContext.drawImage(
+        this.world.rotationCanvas,
+        xTranslation - this.offset.x,
+        yTranslation - this.offset.y,
+        this.width,
+        this.height
+      );
       windowContext.restore();
     });
   };

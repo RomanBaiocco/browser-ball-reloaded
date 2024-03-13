@@ -1,7 +1,9 @@
 import { Ball } from "./ball";
-import { BALL_TYPES } from "./ballTypes";
+import { BALL_TYPES, DEFAULT_BALL_TYPE, type BallType } from "./ballTypes";
 import { BrowserBallWindow, Corner, Point, Quad, Vector } from "./geometry";
 import { INTERSECTION_INDEXES } from "./intersectionIndexes";
+
+const BALL_RENDER_RATE_IN_MS = 15;
 
 const CHILD_DIMENSIONS = {
   childWidth: 300,
@@ -24,8 +26,7 @@ export class World {
     );
 
     if (oldPoint.x === Infinity || oldPoint.y === Infinity) return;
-    this.ball.center.x += oldPoint.x - this.referencePoint.x;
-    this.ball.center.y += oldPoint.y - this.referencePoint.y;
+    this.balls.forEach((ball) => ball.updatePosition(oldPoint, this.referencePoint));
   };
 
   /**
@@ -168,20 +169,40 @@ export class World {
     childWindow.removeEventListener("mouseup", this.ballDraggingManager.up, false);
   };
 
-  ball: Ball = new Ball(this);
-  ballDraggingManager = new BallDraggingManager(this.ball, this);
+  rotationCanvas = document.createElement("canvas");
+
+  balls: Ball[] = [new Ball(this)];
+  ballDraggingManager = new BallDraggingManager(this);
+  renderBalls = () => {
+    this.quads.forEach((quad) => quad.context.clearRect(0, 0, quad.windowRef.innerWidth, quad.windowRef.innerHeight));
+
+    this.balls.forEach((ball) => ball.render());
+  };
   /**
    * Resets the ball to the center of the parent window
    */
   resetBall = () => {
-    this.ball.dragging = true;
-    this.ball.rotation = 0;
-    this.ball.center = new Point(
+    const newBall = new Ball(this);
+    newBall.dragging = true;
+    newBall.rotation = 0;
+    newBall.center = new Point(
       window.screenX - this.referencePoint.x + window.innerWidth / 2,
       window.screenY - this.referencePoint.y + window.innerHeight / 2
     );
+    this.balls = [newBall];
+  };
+  createBall = () => {
+    const newBall = new Ball(this, this.mostRecentBallType);
+    newBall.dragging = true;
+    newBall.rotation = 0;
+    newBall.center = new Point(
+      window.screenX - this.referencePoint.x + window.innerWidth / 2,
+      window.screenY - this.referencePoint.y + window.innerHeight / 2
+    );
+    this.balls.push(newBall);
   };
 
+  mostRecentBallType: BallType = DEFAULT_BALL_TYPE;
   settingsWindow: Window | null = null;
   openBallSettings = () =>
     window.open(
@@ -198,8 +219,23 @@ export class World {
       const setBallTypeButton = settingsWindow.document.createElement("button");
       setBallTypeButton.appendChild(settingsWindow.document.createTextNode(ballType.name));
       ballSettings.appendChild(setBallTypeButton);
-      setBallTypeButton.addEventListener("click", () => this.ball.setBallType(ballType), false);
+      setBallTypeButton.addEventListener(
+        "click",
+        () => {
+          this.balls.at(0)?.setBallType(ballType);
+          this.mostRecentBallType = ballType;
+        },
+        false
+      );
     });
+
+    const actions = settingsWindow.document.getElementById("actions");
+    if (!actions) throw new Error("Actions not found");
+
+    const createBallButton = settingsWindow.document.createElement("button");
+    createBallButton.appendChild(settingsWindow.document.createTextNode("Create Ball"));
+    actions.appendChild(createBallButton);
+    createBallButton.addEventListener("click", this.createBall, false);
   };
 
   constructor() {
@@ -236,6 +272,7 @@ export class World {
 
     this.addQuad(self as BrowserBallWindow);
     setInterval(this.checkForWorldUpdate, 250);
+    setInterval(this.renderBalls, BALL_RENDER_RATE_IN_MS);
   }
 
   /**
@@ -256,11 +293,10 @@ export class World {
 class BallDraggingManager {
   velocity: Vector | null = null;
   lastDragPoint: Point | null = null;
-  ball: Ball;
+  activelyDraggedBall: Ball | null = null;
   world: World;
 
-  constructor(ball: Ball, world: World) {
-    this.ball = ball;
+  constructor(world: World) {
     this.world = world;
   }
 
@@ -273,17 +309,25 @@ class BallDraggingManager {
       clickedWindow.screenY - this.world.referencePoint.y + event.clientY
     );
 
-    if (this.ball.inside(clickedPoint)) {
-      this.ball.dragging = true;
-      this.ball.rotation = 0;
-      this.ball.initialDragPoint = new Point(this.ball.center.x - clickedPoint.x, this.ball.center.y - clickedPoint.y);
-      this.velocity = new Vector(0, 0);
-      this.lastDragPoint = clickedPoint;
-      clickedWindow.addEventListener("mousemove", this.track, false);
+    for (const ball of this.world.balls) {
+      if (ball.inside(clickedPoint)) {
+        this.activelyDraggedBall = ball;
+        this.activelyDraggedBall.dragging = true;
+        this.activelyDraggedBall.rotation = 0;
+        this.activelyDraggedBall.initialDragPoint = new Point(
+          this.activelyDraggedBall.center.x - clickedPoint.x,
+          this.activelyDraggedBall.center.y - clickedPoint.y
+        );
+        this.velocity = new Vector(0, 0);
+        this.lastDragPoint = clickedPoint;
+        clickedWindow.addEventListener("mousemove", this.track, false);
+        return;
+      }
     }
   };
 
   track = (event: MouseEvent) => {
+    if (!this.activelyDraggedBall) return;
     const clickedWindow = (event.target as Element).ownerDocument.defaultView as BrowserBallWindow;
     if (!clickedWindow) return;
     if (!this.lastDragPoint || !this.velocity) throw new Error("track: lastDragPoint or velocity not found");
@@ -293,9 +337,9 @@ class BallDraggingManager {
       clickedWindow.screenY - this.world.referencePoint.y + event.clientY
     );
 
-    this.ball.center = new Point(
-      currentDragPoint.x + this.ball.initialDragPoint.x,
-      currentDragPoint.y + this.ball.initialDragPoint.y
+    this.activelyDraggedBall.center = new Point(
+      currentDragPoint.x + this.activelyDraggedBall.initialDragPoint.x,
+      currentDragPoint.y + this.activelyDraggedBall.initialDragPoint.y
     );
 
     this.velocity = new Vector(currentDragPoint.x - this.lastDragPoint.x, currentDragPoint.y - this.lastDragPoint.y);
@@ -303,19 +347,20 @@ class BallDraggingManager {
   };
 
   up = (event: MouseEvent) => {
+    if (!this.activelyDraggedBall) return;
     const clickedWindow = (event.target as Element).ownerDocument.defaultView as BrowserBallWindow;
     if (!clickedWindow) return;
 
-    if (this.ball.dragging && this.velocity) {
+    if (this.activelyDraggedBall.dragging && this.velocity) {
       clickedWindow.removeEventListener("mousemove", this.track, false);
-      this.ball.velocity = new Vector(
+      this.activelyDraggedBall.velocity = new Vector(
         Math.abs(this.velocity.x) > 20 ? (this.velocity.x < 0 ? -1 : 1) * 20 : this.velocity.x,
         Math.abs(this.velocity.y) > 20 ? (this.velocity.y < 0 ? -1 : 1) * 20 : this.velocity.y
       );
       this.velocity = null;
       this.lastDragPoint = null;
-      this.ball.initialDragPoint = new Point(0, 0);
-      this.ball.dragging = false;
+      this.activelyDraggedBall.initialDragPoint = new Point(0, 0);
+      this.activelyDraggedBall.dragging = false;
     }
   };
 }
