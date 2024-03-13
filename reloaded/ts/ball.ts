@@ -17,7 +17,7 @@ const BALL_EDGE_INDEXES = {
 };
 
 const MAX_BALL_COEFFICIENT_OF_RESTITUTION = 0.8;
-const MAX_VELOCITY = 50;
+const GLOBAL_MAX_VELOCITY = 50;
 
 export class Ball {
   // Configurable properties
@@ -27,6 +27,7 @@ export class Ball {
   rotationFactor;
   scale;
   img = new Image();
+  maxVelocity;
 
   // State
   dragging = true;
@@ -54,6 +55,7 @@ export class Ball {
     this.rotationFactor = ballType.rotationFactor;
     this.scale = ballType.scale;
     this.img.src = ballType.imgSrc;
+    this.maxVelocity = ballType.maxVelocity ?? GLOBAL_MAX_VELOCITY;
 
     this.width = Math.round(this.width * this.scale);
     this.height = Math.round(this.height * this.scale);
@@ -93,8 +95,8 @@ export class Ball {
       if (Math.abs(this.velocity.x) < Math.abs(this.gravity)) this.velocity.x = 0;
       if (Math.abs(this.velocity.y) < Math.abs(this.gravity)) this.velocity.y = 0;
 
-      if (Math.abs(this.velocity.x) > MAX_VELOCITY) this.velocity.x = Math.sign(this.velocity.x) * MAX_VELOCITY;
-      if (Math.abs(this.velocity.y) > MAX_VELOCITY) this.velocity.y = Math.sign(this.velocity.y) * MAX_VELOCITY;
+      if (Math.abs(this.velocity.x) > this.maxVelocity) this.velocity.x = Math.sign(this.velocity.x) * this.maxVelocity;
+      if (Math.abs(this.velocity.y) > this.maxVelocity) this.velocity.y = Math.sign(this.velocity.y) * this.maxVelocity;
 
       this.center = new Point(
         this.center.x + Math.min(Math.round(this.velocity.x)),
