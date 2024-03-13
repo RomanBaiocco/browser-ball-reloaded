@@ -30,7 +30,7 @@ a.child {
 a.reset {
   top: 45px;
 }
-a.settings {
+a.bonus {
   top: 80px;
 }
 
@@ -43,7 +43,7 @@ body p {
   width: 200px;
 }
 
-.settingsPane {
+.bonusPanel {
   height: 100dvh;
   display: flex;
   flex-direction: column;

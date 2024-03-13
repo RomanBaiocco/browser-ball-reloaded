@@ -13,7 +13,7 @@
         window.open(
           "reloaded/parent.html",
           null,
-          `location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=${width},height=${height},left=${left},top=${top}`,
+          `location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=${width},height=${height},left=${left},top=${top}`
         );
         return false;
       }
@@ -63,10 +63,8 @@
         <li>Click the "Create Window" button to spawn a new child window.</li>
         <li>Position the windows next to each other to create a continuous space for the ball to move between.</li>
         <li>Click the "Reset Ball" button if the ball gets stuck or falls off the screen.</li>
-        <li>Click the settings button to change the ball's properties.</li>
+        <li>Click the "Bonus Features" button to change the balls properties, or add more balls</li>
       </ul>
-
-      Have fun!
     </div>
 
     <button id="launch" aria-label="Launch browser ball reloaded in new window" onclick="launch()">

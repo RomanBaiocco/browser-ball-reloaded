@@ -22,7 +22,7 @@ export class World {
 
     this.referencePoint = new Point(
       this.quads.reduce((min, quad) => Math.min(min, quad.windowRef.screenX), Infinity),
-      this.quads.reduce((min, quad) => Math.min(min, quad.windowRef.screenY), Infinity),
+      this.quads.reduce((min, quad) => Math.min(min, quad.windowRef.screenY), Infinity)
     );
 
     if (oldPoint.x === Infinity || oldPoint.y === Infinity) return;
@@ -119,7 +119,7 @@ export class World {
     const worldShouldUpdate = this.quads.some(
       (quad) =>
         quad.topLeftCorner.x != quad.windowRef.screenX - this.referencePoint.x ||
-        quad.topLeftCorner.y != quad.windowRef.screenY - this.referencePoint.y,
+        quad.topLeftCorner.y != quad.windowRef.screenY - this.referencePoint.y
     );
 
     if (worldShouldUpdate) {
@@ -145,7 +145,7 @@ export class World {
       `w${this.quads.length}`,
       `location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=${
         CHILD_DIMENSIONS.childWidth
-      },height=${CHILD_DIMENSIONS.childHeight},left=${window.screenX - 200},top=${window.screenY + 100}`,
+      },height=${CHILD_DIMENSIONS.childHeight},left=${window.screenX - 200},top=${window.screenY + 100}`
     );
   };
   initChild = (childWindow: BrowserBallWindow) => {
@@ -187,7 +187,7 @@ export class World {
     newBall.rotation = 0;
     newBall.center = new Point(
       window.screenX - this.referencePoint.x + window.innerWidth / 2,
-      window.screenY - this.referencePoint.y + window.innerHeight / 2,
+      window.screenY - this.referencePoint.y + window.innerHeight / 2
     );
     this.balls = [newBall];
   };
@@ -197,27 +197,27 @@ export class World {
     newBall.rotation = 0;
     newBall.center = new Point(
       window.screenX - this.referencePoint.x + window.innerWidth / 2,
-      window.screenY - this.referencePoint.y + window.innerHeight / 2,
+      window.screenY - this.referencePoint.y + window.innerHeight / 2
     );
     this.balls.push(newBall);
   };
 
   mostRecentBallType: BallType = DEFAULT_BALL_TYPE;
-  settingsWindow: Window | null = null;
-  openBallSettings = () =>
+  bonusWindow: Window | null = null;
+  openBonusWindow = () =>
     window.open(
-      "settings.html",
-      "settings",
-      "location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=150,height=300",
+      "bonus.html",
+      "bonus",
+      "location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=150,height=300"
     );
-  initSettings = (settingsWindow: Window) => {
-    this.settingsWindow = settingsWindow;
-    const ballSettings = settingsWindow.document.getElementById("ball-settings");
+  initBonus = (bonusWindow: Window) => {
+    this.bonusWindow = bonusWindow;
+    const ballSettings = bonusWindow.document.getElementById("ball-settings");
     if (!ballSettings) throw new Error("Ball settings not found");
 
     BALL_TYPES.forEach((ballType) => {
-      const setBallTypeButton = settingsWindow.document.createElement("button");
-      setBallTypeButton.appendChild(settingsWindow.document.createTextNode(ballType.name));
+      const setBallTypeButton = bonusWindow.document.createElement("button");
+      setBallTypeButton.appendChild(bonusWindow.document.createTextNode(ballType.name));
       ballSettings.appendChild(setBallTypeButton);
       setBallTypeButton.addEventListener(
         "click",
@@ -225,15 +225,15 @@ export class World {
           this.balls.at(0)?.setBallType(ballType);
           this.mostRecentBallType = ballType;
         },
-        false,
+        false
       );
     });
 
-    const actions = settingsWindow.document.getElementById("actions");
+    const actions = bonusWindow.document.getElementById("actions");
     if (!actions) throw new Error("Actions not found");
 
-    const createBallButton = settingsWindow.document.createElement("button");
-    createBallButton.appendChild(settingsWindow.document.createTextNode("Create Ball"));
+    const createBallButton = bonusWindow.document.createElement("button");
+    createBallButton.appendChild(bonusWindow.document.createTextNode("Create Ball"));
     createBallButton.addEventListener("click", this.createBall, false);
     actions.appendChild(createBallButton);
   };
@@ -264,11 +264,11 @@ export class World {
     document.body.appendChild(resetBallButton);
     resetBallButton.addEventListener("click", this.resetBall, false);
 
-    const ballSettingsButton = document.createElement("a");
-    ballSettingsButton.appendChild(document.createTextNode("Settings"));
-    ballSettingsButton.className = "settings";
-    document.body.appendChild(ballSettingsButton);
-    ballSettingsButton.addEventListener("click", this.openBallSettings, false);
+    const openBonusWindowButton = document.createElement("a");
+    openBonusWindowButton.appendChild(document.createTextNode("Bonus Features"));
+    openBonusWindowButton.className = "bonus";
+    document.body.appendChild(openBonusWindowButton);
+    openBonusWindowButton.addEventListener("click", this.openBonusWindow, false);
 
     this.addQuad(self as BrowserBallWindow);
     setInterval(this.checkForWorldUpdate, 250);
@@ -286,7 +286,7 @@ export class World {
     self.removeEventListener("mousedown", this.ballDraggingManager.down);
     self.removeEventListener("mouseup", this.ballDraggingManager.up);
 
-    if (this.settingsWindow) this.settingsWindow.close();
+    if (this.bonusWindow) this.bonusWindow.close();
   };
 }
 
@@ -306,7 +306,7 @@ class BallDraggingManager {
 
     const clickedPoint = new Point(
       clickedWindow.screenX - this.world.referencePoint.x + event.clientX,
-      clickedWindow.screenY - this.world.referencePoint.y + event.clientY,
+      clickedWindow.screenY - this.world.referencePoint.y + event.clientY
     );
 
     for (const ball of this.world.balls) {
@@ -316,7 +316,7 @@ class BallDraggingManager {
         this.activelyDraggedBall.rotation = 0;
         this.activelyDraggedBall.initialDragPoint = new Point(
           this.activelyDraggedBall.center.x - clickedPoint.x,
-          this.activelyDraggedBall.center.y - clickedPoint.y,
+          this.activelyDraggedBall.center.y - clickedPoint.y
         );
         this.velocity = new Vector(0, 0);
         this.lastDragPoint = clickedPoint;
@@ -334,12 +334,12 @@ class BallDraggingManager {
 
     const currentDragPoint = new Point(
       clickedWindow.screenX - this.world.referencePoint.x + event.clientX,
-      clickedWindow.screenY - this.world.referencePoint.y + event.clientY,
+      clickedWindow.screenY - this.world.referencePoint.y + event.clientY
     );
 
     this.activelyDraggedBall.center = new Point(
       currentDragPoint.x + this.activelyDraggedBall.initialDragPoint.x,
-      currentDragPoint.y + this.activelyDraggedBall.initialDragPoint.y,
+      currentDragPoint.y + this.activelyDraggedBall.initialDragPoint.y
     );
 
     this.velocity = new Vector(currentDragPoint.x - this.lastDragPoint.x, currentDragPoint.y - this.lastDragPoint.y);
@@ -355,7 +355,7 @@ class BallDraggingManager {
       clickedWindow.removeEventListener("mousemove", this.track, false);
       this.activelyDraggedBall.velocity = new Vector(
         Math.abs(this.velocity.x) > 20 ? (this.velocity.x < 0 ? -1 : 1) * 20 : this.velocity.x,
-        Math.abs(this.velocity.y) > 20 ? (this.velocity.y < 0 ? -1 : 1) * 20 : this.velocity.y,
+        Math.abs(this.velocity.y) > 20 ? (this.velocity.y < 0 ? -1 : 1) * 20 : this.velocity.y
       );
       this.velocity = null;
       this.lastDragPoint = null;
