@@ -57,6 +57,12 @@ body {
   border-top: 1px solid #6c6c6c;
   margin: 15px;
   width: 600px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.attribution {
+  flex-grow: 1;
 }
 
 #launch {
@@ -79,4 +85,15 @@ ul {
 
 canvas {
   display: none;
+}
+
+.github-logo {
+  width: 36px;
+  opacity: 0.5;
+  transition: opacity 0.3s ease-in-out;
+  margin: auto;
+}
+
+.github-logo:hover {
+  opacity: 1;
 }
