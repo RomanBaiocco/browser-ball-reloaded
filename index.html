@@ -16,6 +16,8 @@
     <meta name="twitter:description" content="Definitely more cool than you think it will be" />
     <meta name="twitter:image" content="https://romanbaiocco.github.io/browser-ball-reloaded/social.png" />
 
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <link rel="stylesheet" href="./reloaded/css/intro.css" />
 
     <script type="text/javascript">
@@ -34,79 +36,86 @@
     </script>
   </head>
   <body>
-    <div class="header">
-      <h1 class="title">Browser Ball Reloaded</h1>
-      <h2 class="tagline"><i>Definitely</i> More Cool Than You Think It Will Be</h2>
-    </div>
-
-    <div class="warning-callout">
-      Important note! You need to be on a desktop browser that supports multiple windows (sorry Arc).<br />It is
-      impossible to fully experience this on a mobile device.
-    </div>
-
-    <div id="content">
-      <p>
-        Browser Ball was a 2009 interactive web experiment created by Mark Mahoney for Chrome Experiments. It was part
-        of a series of websites designed to showcase the capabilities of Google Chrome and modern web technologies of
-        the time, including HTML5 and advanced JavaScript. These experiments were intended to demonstrate the potential
-        for creating rich, interactive experiences directly within the web browser, without the need for external
-        plugins or software.
-      </p>
-      <p>
-        This particular experiment was a simple physics simulation that allowed users to interact with a beach ball.
-        What makes it special is that the beach ball could be thrown between multiple browser windows, creating a
-        continuous space in which the ball could move. This enraptured my 13-year-old self, and has probably somewhat
-        contributed to me eventually becoming a web developer.
-      </p>
-      <p>
-        There are two parts of this that sadden me. First, in the 15 years since its release I haven't seen anything
-        like it (<a href="https://github.com/Momciloo/fun-with-sockets">with one exception</a>). It exemplifies some of
-        the whimsy we've lost in the modern web. Second is the fact that
-        <a href="https://experiments.withgoogle.com/browser-ball">the original experiment is no longer available</a>.
-        Although it can still be found on The Internet Archive, something this cool and unique deserves to live on.
-      </p>
-      <p>
-        <a href="https://web.archive.org/web/20160531203657/http://weareinstrument.com/ball/">
-          If you'd like to see the original Browser Ball in all its glory, you can view it here
-        </a>
-      </p>
-
-      <h2>How to play:</h2>
-      <ul>
-        <li>Click and drag the ball to throw it around.</li>
-        <li>Click the "Create Window" button to spawn a new child window.</li>
-        <li>Position the windows next to each other to create a continuous space for the ball to move between.</li>
-        <li>Click the "Reset Ball" button if the ball gets stuck or falls off the screen.</li>
-        <li>Click the "Bonus Features" button to change the balls properties, or add more balls</li>
-      </ul>
-    </div>
-
-    <button id="launch" aria-label="Launch browser ball reloaded in new window" onclick="launch()">
-      Launch Browser Ball Reloaded
-    </button>
-
-    <div id="footer">
-      <div class="attribution">
-        <p>
-          Originally created by Mark Mahoney.<br />Remastered by
-          <a href="https://github.com/RomanBaiocco">Roman Baiocco</a>.
-        </p>
+    <div class="container">
+      <div class="header">
+        <h1 class="title">Browser Ball Reloaded</h1>
+        <h2 class="tagline"><i>Definitely</i> more cool than you think it will be</h2>
       </div>
-      <div class="github-logo">
-        <a
-          href="https://github.com/RomanBaiocco/browser-ball-reloaded"
-          aria-label="View source on GitHub"
-          target="_blank"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 98 96">
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"
-              fill="#24292f"
-            />
-          </svg>
-        </a>
+
+      <div class="warning-callout">
+        Important note! You need to be on a desktop browser that supports multiple windows (sorry Arc).<br
+          class="warning-callout-line-break"
+        />
+        It is impossible to fully experience this on a mobile device.
+      </div>
+
+      <div id="content">
+        <p>
+          Browser Ball was a 2009 interactive web experiment created by Mark Mahoney for Chrome Experiments. It was part
+          of a series of websites designed to showcase the capabilities of Google Chrome and modern web technologies of
+          the time, including HTML5 and advanced JavaScript. These experiments were intended to demonstrate the
+          potential for creating rich, interactive experiences directly within the web browser, without the need for
+          external plugins or software.
+        </p>
+        <p>
+          This particular experiment was a simple physics simulation that allowed users to interact with a beach ball.
+          What makes it special is that the beach ball could be thrown between multiple browser windows, creating a
+          continuous space in which the ball could move. This enraptured my 13-year-old self, and has probably somewhat
+          contributed to me eventually becoming a web developer.
+        </p>
+        <p>
+          There are two parts of this that sadden me. First, in the 15 years since its release I haven't seen anything
+          like it (<a href="https://github.com/Momciloo/fun-with-sockets">with one exception</a>). It exemplifies some
+          of the whimsy we've lost in the modern web. Second is the fact that
+          <a href="https://experiments.withgoogle.com/browser-ball">the original experiment is no longer available</a>.
+          Although it can still be found on The Internet Archive, something this cool and unique deserves to live on.
+          That's why I've rewritten it in Typescript, added a few new features, and made it available to play here. If
+          you're interested in understanding how it works, you can
+          <a href="https://github.com/RomanBaiocco/browser-ball-reloaded">view the source code on github</a>.
+        </p>
+        <p class="archive-link">
+          <a href="https://web.archive.org/web/20160531203657/http://weareinstrument.com/ball/">
+            If you'd like to see the original Browser Ball in all its glory, you can view it here
+          </a>
+        </p>
+
+        <h2>How to play:</h2>
+        <ul>
+          <li>Click and drag the ball to throw it around.</li>
+          <li>Click the "Create Window" button to spawn a new child window.</li>
+          <li>Position the windows next to each other to create a continuous space for the ball to move between.</li>
+          <li>Click the "Reset Ball" button if the ball gets stuck or falls off the screen.</li>
+          <li>Click the "Bonus Features" button to change the balls properties, or add more balls</li>
+        </ul>
+      </div>
+
+      <button id="launch" aria-label="Launch browser ball reloaded in new window" onclick="launch()">
+        Launch Browser Ball Reloaded
+      </button>
+
+      <div id="footer">
+        <div class="attribution">
+          <p>
+            Originally created by Mark Mahoney.<br />Remastered by
+            <a href="https://github.com/RomanBaiocco">Roman Baiocco</a>.
+          </p>
+        </div>
+        <div class="github-logo">
+          <a
+            href="https://github.com/RomanBaiocco/browser-ball-reloaded"
+            aria-label="View source on GitHub"
+            target="_blank"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 98 96">
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z"
+                fill="#24292f"
+              />
+            </svg>
+          </a>
+        </div>
       </div>
     </div>
   </body>
