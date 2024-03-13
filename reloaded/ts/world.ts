@@ -193,7 +193,7 @@ export class World {
   };
   createBall = () => {
     const newBall = new Ball(this, this.mostRecentBallType);
-    newBall.dragging = true;
+    newBall.dragging = false;
     newBall.rotation = 0;
     newBall.center = new Point(
       window.screenX - this.referencePoint.x + window.innerWidth / 2,
@@ -234,8 +234,8 @@ export class World {
 
     const createBallButton = settingsWindow.document.createElement("button");
     createBallButton.appendChild(settingsWindow.document.createTextNode("Create Ball"));
-    actions.appendChild(createBallButton);
     createBallButton.addEventListener("click", this.createBall, false);
+    actions.appendChild(createBallButton);
   };
 
   constructor() {

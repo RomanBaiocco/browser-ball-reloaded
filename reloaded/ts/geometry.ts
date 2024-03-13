@@ -12,6 +12,10 @@ export class Point {
   translate(vector: Vector) {
     return new Point(this.x + vector.x, this.y + vector.y);
   }
+
+  distanceTo(otherPoint: Point) {
+    return Math.sqrt((this.x - otherPoint.x) ** 2 + (this.y - otherPoint.y) ** 2);
+  }
 }
 
 export class Vector {
@@ -177,6 +181,9 @@ export class Quad {
    * @param newWorldReference
    */
   updatePosition = (newWorldReference: World["referencePoint"]) => {
+
+    console.log('screen', this.windowRef.screenX, this.windowRef.screenY, this.windowRef.screen.width, this.windowRef.screen.height);
+
     this.topLeftCorner = new Point(
       this.windowRef.screenX - newWorldReference.x,
       this.windowRef.screenY - newWorldReference.y

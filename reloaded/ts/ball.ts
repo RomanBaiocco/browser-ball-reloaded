@@ -9,10 +9,12 @@ enum BallEdge {
   Left = "Left",
 }
 
+const BALL_COEFFICIENT_OF_RESTITUTION = 0.8;
+
 export class Ball {
   // Configurable properties
   gravity;
-  bounceDecay;
+  wallCoefficientOfRestitution;
   orthoginalFriction;
   rotationFactor;
   scale;
@@ -39,7 +41,7 @@ export class Ball {
     this.world = world;
 
     this.gravity = ballType.gravity;
-    this.bounceDecay = ballType.bounceDecay;
+    this.wallCoefficientOfRestitution = ballType.wallCoefficientOfRestitution;
     this.orthoginalFriction = ballType.orthoginalFriction;
     this.rotationFactor = ballType.rotationFactor;
     this.scale = ballType.scale;
@@ -86,6 +88,10 @@ export class Ball {
       this.center = new Point(this.center.x + Math.round(this.velocity.x), this.center.y + Math.round(this.velocity.y));
       this.handleCollision();
     }
+
+    this.world.balls.forEach((otherBall) => {
+      if (otherBall !== this) this.handleBallCollision(otherBall);
+    });
 
     this.world.quads.forEach((quad) => {
       const windowRef = quad.windowRef;
@@ -211,11 +217,11 @@ export class Ball {
 
             this.velocity = new Vector(
               !isBallMovingAwayFromCornerX && !isBallMovingAwayFromCornerY
-                ? currentBallVeloicty.y * this.bounceDecay * -closestCorner.dx
+                ? currentBallVeloicty.y * this.wallCoefficientOfRestitution * -closestCorner.dx
                 : currentBallVeloicty.x * (isBallMovingAwayFromCornerX ? 1 : -1),
               !isBallMovingAwayFromCornerX && !isBallMovingAwayFromCornerY
-                ? currentBallVeloicty.x * this.bounceDecay * -closestCorner.dy
-                : currentBallVeloicty.y * this.bounceDecay * (isBallMovingAwayFromCornerY ? 1 : -1)
+                ? currentBallVeloicty.x * this.wallCoefficientOfRestitution * -closestCorner.dy
+                : currentBallVeloicty.y * this.wallCoefficientOfRestitution * (isBallMovingAwayFromCornerY ? 1 : -1)
             );
 
             this.rotation = this.velocity.x * this.rotationFactor + this.velocity.y * this.rotationFactor;
@@ -241,10 +247,42 @@ export class Ball {
         (this.velocity[orthoganalAxis] < 0 ? -1 : 1);
     }
 
-    this.velocity[collisionAxis] = -this.velocity[collisionAxis] * this.bounceDecay;
+    this.velocity[collisionAxis] = -this.velocity[collisionAxis] * this.wallCoefficientOfRestitution;
     this.velocity[orthoganalAxis] = this.velocity[orthoganalAxis] * this.orthoginalFriction;
     this.rotation = this.velocity[orthoganalAxis] * this.rotationFactor;
   };
+
+  handleBallCollision(otherBall: Ball) {
+    const dist = this.center.distanceTo(otherBall.center);
+    if (dist < this.radius + otherBall.radius) {
+      const overlap = 0.5 * (dist - this.radius - otherBall.radius);
+
+      // Displace the balls away from each other
+      this.center.x -= (overlap * (this.center.x - otherBall.center.x)) / dist;
+      this.center.y -= (overlap * (this.center.y - otherBall.center.y)) / dist;
+      otherBall.center.x += (overlap * (this.center.x - otherBall.center.x)) / dist;
+      otherBall.center.y += (overlap * (this.center.y - otherBall.center.y)) / dist;
+
+      const collisionVector = new Vector(
+        (otherBall.center.x - this.center.x) / dist,
+        (otherBall.center.y - this.center.y) / dist
+      );
+
+      const p =
+        (2 *
+          (this.velocity.x * collisionVector.x +
+            this.velocity.y * collisionVector.y -
+            otherBall.velocity.x * collisionVector.x -
+            otherBall.velocity.y * collisionVector.y)) /
+        2;
+
+      // Update velocities based on the collision
+      this.velocity.x -= p * collisionVector.x * BALL_COEFFICIENT_OF_RESTITUTION;
+      this.velocity.y -= p * collisionVector.y * BALL_COEFFICIENT_OF_RESTITUTION;
+      otherBall.velocity.x += p * collisionVector.x * BALL_COEFFICIENT_OF_RESTITUTION;
+      otherBall.velocity.y += p * collisionVector.y * BALL_COEFFICIENT_OF_RESTITUTION;
+    }
+  }
 
   /**
    * Recurrsively determines how much
@@ -286,7 +324,7 @@ export class Ball {
 
   setBallType = (ballType: BallType) => {
     this.gravity = ballType.gravity;
-    this.bounceDecay = ballType.bounceDecay;
+    this.wallCoefficientOfRestitution = ballType.wallCoefficientOfRestitution;
     this.orthoginalFriction = ballType.orthoginalFriction;
     this.rotationFactor = ballType.rotationFactor;
 

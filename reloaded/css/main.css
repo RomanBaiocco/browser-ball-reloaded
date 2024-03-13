@@ -50,6 +50,17 @@ body p {
   flex-direction: column;
 }
 
+#actions {
+  display: flex;
+  flex-direction: column;
+}
+
+#create-ball-warning {
+  line-height: 1rem;
+  padding-bottom: 0.5rem;
+  text-align: center;
+}
+
 button {
   background: #ccc;
   border: 2px solid #333;

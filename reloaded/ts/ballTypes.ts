@@ -9,7 +9,7 @@ export type BallType = {
 
   // Physics
   gravity: number;
-  bounceDecay: number;
+  wallCoefficientOfRestitution: number;
   orthoginalFriction: number;
   rotationFactor: number;
 
@@ -22,7 +22,7 @@ export const BALL_TYPES: BallType[] = [
   {
     name: "default",
     gravity: 1,
-    bounceDecay: 0.89,
+    wallCoefficientOfRestitution: 0.89,
     orthoginalFriction: 0.97,
     rotationFactor: 0.015,
     scale: 1,
@@ -31,7 +31,7 @@ export const BALL_TYPES: BallType[] = [
   {
     name: "bowling",
     gravity: 2.5,
-    bounceDecay: 0.25,
+    wallCoefficientOfRestitution: 0.25,
     orthoginalFriction: 0.45,
     rotationFactor: 0.005,
     scale: 1.1,
@@ -40,7 +40,7 @@ export const BALL_TYPES: BallType[] = [
   {
     name: "tennis",
     gravity: 1.25,
-    bounceDecay: 0.95,
+    wallCoefficientOfRestitution: 0.95,
     orthoginalFriction: 0.99,
     rotationFactor: 0.01,
     scale: 0.5,
@@ -49,7 +49,7 @@ export const BALL_TYPES: BallType[] = [
   {
     name: "pool",
     gravity: 1.75,
-    bounceDecay: 0.25,
+    wallCoefficientOfRestitution: 0.25,
     orthoginalFriction: 0.85,
     rotationFactor: 0.01,
     scale: 0.4,
@@ -58,7 +58,7 @@ export const BALL_TYPES: BallType[] = [
   {
     name: "anti-gravity",
     gravity: -1,
-    bounceDecay: 0.89,
+    wallCoefficientOfRestitution: 0.89,
     orthoginalFriction: 0.97,
     rotationFactor: 0.015,
     scale: 1,
