@@ -1,0 +1,1 @@
+This is a version of the site that is much closer to a 1:1 transcription of the original browser ball, jsut in TypeScript. If you're curious about how the original browser ball worked without classes, I'd reccomend this part of the repo.

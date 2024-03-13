@@ -22,7 +22,7 @@
   <body>
     <div class="header">
       <h1 class="title">Browser Ball Reloaded</h1>
-      <h2 class="tagline">Definitely More Cool Than You Think It Will Be</h2>
+      <h2 class="tagline"><i>Definitely</i> More Cool Than You Think It Will Be</h2>
     </div>
 
     <div class="warning-callout">
@@ -35,37 +35,40 @@
         Browser Ball was a 2009 interactive web experiment created by Mark Mahoney for the Chrome Experiments website.
       </p>
       <p>
-        It was part of a series of experiments designed to showcase the capabilities of Google Chrome and modern web
+        It was part of a series of websites designed to showcase the capabilities of Google Chrome and modern web
         technologies of the time, including HTML5 and advanced JavaScript. These experiments were intended to
         demonstrate the potential for creating rich, interactive experiences directly within the web browser, without
         the need for external plugins or software.
       </p>
       <p>
-        TODO: Describe the original Browser Ball experiment and its features. Explain the changes made in the
-        remastered.
+        This particular experiment was a simple physics simulation that allowed users to interact with a beach ball.
+        What makes it special is that the beach ball could be thrown between multiple browser windows, creating a
+        continuous space in which the ball could move. This enraptured my 13-year-old self, and has probably somewhat
+        contributed to me eventually becoming a web developer.
       </p>
       <p>
-        <a href="./classic/index.html">
-          If you'd like to see the original Browser Ball preserved in all its glory, you can view it here
+        There are two parts of this that sadden me. First, in the 15 years since it's release I haven't seen anything
+        like it (<a href="https://github.com/Momciloo/fun-with-sockets">with one exception</a>). It exemplifies some of
+        the whimsy we've lost in the modern web. Second is the fact that
+        <a href="https://experiments.withgoogle.com/browser-ball">the original experiment is no longer available</a>.
+        Although it can still be found on The Internet Acrhive, something this cool and unique deserves to live on.
+      </p>
+      <p>
+        <a href="https://web.archive.org/web/20160531203657/http://weareinstrument.com/ball/">
+          If you'd like to see the original Browser Ball in all its glory, you can view it here
         </a>
       </p>
 
-      <h3>Instructions</h3>
-      <p>Clicking the link below spawns the main Browser Ball window, which features two buttons:</p>
-      <ol>
-        <li>
-          Create Window: this will spawn a new child window. You may position and resize each window as you see fit.
-          Browser windows that overlap will become a part of the continuous space in which the beach ball may move.
-        </li>
-        <li>
-          Reset Ball: sometimes things get a little out of hand and the ball falls off the face of the universe. This is
-          usually my fault. Click the reset button and you'll be okay.
-        </li>
-      </ol>
-      <p>
-        The main window should also have a beach ball. Fling that puppy around. Make neat spaces for the ball to bounce
-        around in. Create complicated layouts that may crash your browser. Have fun.
-      </p>
+      <h2>How to play:</h2>
+      <ul>
+        <li>Click and drag the ball to throw it around.</li>
+        <li>Click the "Create Window" button to spawn a new child window.</li>
+        <li>Position the windows next to each other to create a continuous space for the ball to move between.</li>
+        <li>Click the "Reset Ball" button if the ball gets stuck or falls off the screen.</li>
+        <li>Click the settings button to change the ball's properties.</li>
+      </ul>
+
+      Have fun!
     </div>
 
     <button id="launch" aria-label="Launch browser ball reloaded in new window" onclick="launch()">
@@ -73,7 +76,10 @@
     </button>
 
     <div id="footer">
-      <p>Remastered by <a href="https://github.com/RomanBaiocco">Roman Baiocco</a>.</p>
+      <p>
+        Originally created by Mark Mahoney.<br />Remastered by
+        <a href="https://github.com/RomanBaiocco">Roman Baiocco</a>.
+      </p>
     </div>
   </body>
 </html>
