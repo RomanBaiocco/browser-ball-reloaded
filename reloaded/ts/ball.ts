@@ -357,6 +357,7 @@ export class Ball {
     this.height = Math.round(this.height * (this.scale / oldScale));
     this.radius = this.width / 2;
     this.offset = { x: this.width / 2, y: this.height / 2 };
+    this.angle = 0;
 
     this.img.src = ballType.imgSrc;
   };

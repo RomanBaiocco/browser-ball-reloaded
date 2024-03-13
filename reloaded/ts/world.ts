@@ -22,7 +22,7 @@ export class World {
 
     this.referencePoint = new Point(
       this.quads.reduce((min, quad) => Math.min(min, quad.windowRef.screenX), Infinity),
-      this.quads.reduce((min, quad) => Math.min(min, quad.windowRef.screenY), Infinity)
+      this.quads.reduce((min, quad) => Math.min(min, quad.windowRef.screenY), Infinity),
     );
 
     if (oldPoint.x === Infinity || oldPoint.y === Infinity) return;
@@ -119,7 +119,7 @@ export class World {
     const worldShouldUpdate = this.quads.some(
       (quad) =>
         quad.topLeftCorner.x != quad.windowRef.screenX - this.referencePoint.x ||
-        quad.topLeftCorner.y != quad.windowRef.screenY - this.referencePoint.y
+        quad.topLeftCorner.y != quad.windowRef.screenY - this.referencePoint.y,
     );
 
     if (worldShouldUpdate) {
@@ -145,7 +145,7 @@ export class World {
       `w${this.quads.length}`,
       `location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=${
         CHILD_DIMENSIONS.childWidth
-      },height=${CHILD_DIMENSIONS.childHeight},left=${window.screenX - 200},top=${window.screenY + 100}`
+      },height=${CHILD_DIMENSIONS.childHeight},left=${window.screenX - 200},top=${window.screenY + 100}`,
     );
   };
   initChild = (childWindow: BrowserBallWindow) => {
@@ -187,7 +187,7 @@ export class World {
     newBall.rotation = 0;
     newBall.center = new Point(
       window.screenX - this.referencePoint.x + window.innerWidth / 2,
-      window.screenY - this.referencePoint.y + window.innerHeight / 2
+      window.screenY - this.referencePoint.y + window.innerHeight / 2,
     );
     this.balls = [newBall];
   };
@@ -197,7 +197,7 @@ export class World {
     newBall.rotation = 0;
     newBall.center = new Point(
       window.screenX - this.referencePoint.x + window.innerWidth / 2,
-      window.screenY - this.referencePoint.y + window.innerHeight / 2
+      window.screenY - this.referencePoint.y + window.innerHeight / 2,
     );
     this.balls.push(newBall);
   };
@@ -208,7 +208,7 @@ export class World {
     window.open(
       "bonus.html",
       "bonus",
-      "location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=150,height=300"
+      "location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=150,height=300",
     );
   initBonus = (bonusWindow: Window) => {
     this.bonusWindow = bonusWindow;
@@ -225,7 +225,7 @@ export class World {
           this.balls.at(0)?.setBallType(ballType);
           this.mostRecentBallType = ballType;
         },
-        false
+        false,
       );
     });
 
@@ -306,7 +306,7 @@ class BallDraggingManager {
 
     const clickedPoint = new Point(
       clickedWindow.screenX - this.world.referencePoint.x + event.clientX,
-      clickedWindow.screenY - this.world.referencePoint.y + event.clientY
+      clickedWindow.screenY - this.world.referencePoint.y + event.clientY,
     );
 
     for (const ball of this.world.balls) {
@@ -316,7 +316,7 @@ class BallDraggingManager {
         this.activelyDraggedBall.rotation = 0;
         this.activelyDraggedBall.initialDragPoint = new Point(
           this.activelyDraggedBall.center.x - clickedPoint.x,
-          this.activelyDraggedBall.center.y - clickedPoint.y
+          this.activelyDraggedBall.center.y - clickedPoint.y,
         );
         this.velocity = new Vector(0, 0);
         this.lastDragPoint = clickedPoint;
@@ -334,12 +334,12 @@ class BallDraggingManager {
 
     const currentDragPoint = new Point(
       clickedWindow.screenX - this.world.referencePoint.x + event.clientX,
-      clickedWindow.screenY - this.world.referencePoint.y + event.clientY
+      clickedWindow.screenY - this.world.referencePoint.y + event.clientY,
     );
 
     this.activelyDraggedBall.center = new Point(
       currentDragPoint.x + this.activelyDraggedBall.initialDragPoint.x,
-      currentDragPoint.y + this.activelyDraggedBall.initialDragPoint.y
+      currentDragPoint.y + this.activelyDraggedBall.initialDragPoint.y,
     );
 
     this.velocity = new Vector(currentDragPoint.x - this.lastDragPoint.x, currentDragPoint.y - this.lastDragPoint.y);
@@ -355,7 +355,7 @@ class BallDraggingManager {
       clickedWindow.removeEventListener("mousemove", this.track, false);
       this.activelyDraggedBall.velocity = new Vector(
         Math.abs(this.velocity.x) > 20 ? (this.velocity.x < 0 ? -1 : 1) * 20 : this.velocity.x,
-        Math.abs(this.velocity.y) > 20 ? (this.velocity.y < 0 ? -1 : 1) * 20 : this.velocity.y
+        Math.abs(this.velocity.y) > 20 ? (this.velocity.y < 0 ? -1 : 1) * 20 : this.velocity.y,
       );
       this.velocity = null;
       this.lastDragPoint = null;
