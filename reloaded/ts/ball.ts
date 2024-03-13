@@ -16,7 +16,7 @@ const BALL_EDGE_INDEXES = {
   [BallEdge.Left]: 3,
 };
 
-const BALL_COEFFICIENT_OF_RESTITUTION = 0.8;
+const MAX_BALL_COEFFICIENT_OF_RESTITUTION = 0.8;
 const MAX_VELOCITY = 50;
 
 export class Ball {
@@ -98,7 +98,7 @@ export class Ball {
 
       this.center = new Point(
         this.center.x + Math.min(Math.round(this.velocity.x)),
-        this.center.y + Math.round(this.velocity.y)
+        this.center.y + Math.round(this.velocity.y),
       );
       this.handleCollision();
     }
@@ -134,7 +134,7 @@ export class Ball {
         xTranslation - this.offset.x,
         yTranslation - this.offset.y,
         this.width,
-        this.height
+        this.height,
       );
       windowContext.restore();
     });
@@ -187,7 +187,7 @@ export class Ball {
             }
             return acc;
           },
-          { closestCornerIndex: -1, distanceToClosestCorner: Infinity }
+          { closestCornerIndex: -1, distanceToClosestCorner: Infinity },
         );
 
         if (closestCornerIndex >= 0) {
@@ -218,7 +218,7 @@ export class Ball {
 
             this.center.x -= Math.round(currentBallVeloicty.x * velocityAdjustmentFactor);
             this.center.y -= Math.round(
-              currentBallVeloicty.y * velocityAdjustmentFactor * (currentBallVeloicty.y < 0 ? -1 : 1)
+              currentBallVeloicty.y * velocityAdjustmentFactor * (currentBallVeloicty.y < 0 ? -1 : 1),
             );
 
             const isBallMovingAwayFromCornerX =
@@ -235,7 +235,7 @@ export class Ball {
                 : currentBallVeloicty.x * (isBallMovingAwayFromCornerX ? 1 : -1),
               !isBallMovingAwayFromCornerX && !isBallMovingAwayFromCornerY
                 ? currentBallVeloicty.x * this.wallCoefficientOfRestitution * -closestCorner.dy
-                : currentBallVeloicty.y * this.wallCoefficientOfRestitution * (isBallMovingAwayFromCornerY ? 1 : -1)
+                : currentBallVeloicty.y * this.wallCoefficientOfRestitution * (isBallMovingAwayFromCornerY ? 1 : -1),
             );
 
             this.rotation = this.velocity.x * this.rotationFactor + this.velocity.y * this.rotationFactor;
@@ -277,24 +277,31 @@ export class Ball {
 
       const collisionVector = new Vector(
         (otherBall.center.x - this.center.x) / dist,
-        (otherBall.center.y - this.center.y) / dist
+        (otherBall.center.y - this.center.y) / dist,
       );
 
-      const p =
-        (2 *
-          (this.velocity.x * collisionVector.x +
-            this.velocity.y * collisionVector.y -
-            otherBall.velocity.x * collisionVector.x -
-            otherBall.velocity.y * collisionVector.y)) /
-        2;
+      // Relative velocity in normal direction
+      const dvx = this.velocity.x - otherBall.velocity.x;
+      const dvy = this.velocity.y - otherBall.velocity.y;
 
-      console.log({ p, collisionVector, thisVelocity: this.velocity, otherBallVelocity: otherBall.velocity });
+      const velocityAdjustmentFactor = (dvx * collisionVector.x + dvy * collisionVector.y) / 1.5;
 
-      // Update velocities based on the collision
-      this.velocity.x -= p * collisionVector.x * BALL_COEFFICIENT_OF_RESTITUTION;
-      this.velocity.y -= p * collisionVector.y * BALL_COEFFICIENT_OF_RESTITUTION;
-      otherBall.velocity.x += p * collisionVector.x * BALL_COEFFICIENT_OF_RESTITUTION;
-      otherBall.velocity.y += p * collisionVector.y * BALL_COEFFICIENT_OF_RESTITUTION;
+      this.velocity.x -=
+        velocityAdjustmentFactor *
+        collisionVector.x *
+        Math.min(this.wallCoefficientOfRestitution, MAX_BALL_COEFFICIENT_OF_RESTITUTION);
+      this.velocity.y -=
+        velocityAdjustmentFactor *
+        collisionVector.y *
+        Math.min(this.wallCoefficientOfRestitution, MAX_BALL_COEFFICIENT_OF_RESTITUTION);
+      otherBall.velocity.x +=
+        velocityAdjustmentFactor *
+        collisionVector.x *
+        Math.min(otherBall.wallCoefficientOfRestitution, MAX_BALL_COEFFICIENT_OF_RESTITUTION);
+      otherBall.velocity.y +=
+        velocityAdjustmentFactor *
+        collisionVector.y *
+        Math.min(otherBall.wallCoefficientOfRestitution, MAX_BALL_COEFFICIENT_OF_RESTITUTION);
     }
   }
 

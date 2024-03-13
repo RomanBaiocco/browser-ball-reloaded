@@ -16,5 +16,4 @@
     "types": ["node"]
   },
   "include": ["classic", "reloaded"]
-
 }

@@ -30,10 +30,10 @@ export const BALL_TYPES: BallType[] = [
   },
   {
     name: "bowling",
-    gravity: 2.5,
+    gravity: 3,
     wallCoefficientOfRestitution: 0.25,
-    orthoginalFriction: 0.45,
-    rotationFactor: 0.005,
+    orthoginalFriction: 0.85,
+    rotationFactor: 0.02,
     scale: 1.1,
     imgSrc: bowlingBallImage,
   },

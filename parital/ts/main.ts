@@ -462,7 +462,7 @@ const ROTATION_FACTOR = 0.015;
       const worldShouldUpdate = quads.list.some(
         (quad) =>
           quad.topLeftCorner.x != quad.windowRef.screenX - worldReference.point.x ||
-          quad.topLeftCorner.y != quad.windowRef.screenY - worldReference.point.y
+          quad.topLeftCorner.y != quad.windowRef.screenY - worldReference.point.y,
       );
 
       if (worldShouldUpdate) {
@@ -529,7 +529,7 @@ const ROTATION_FACTOR = 0.015;
               }
               return acc;
             },
-            { closestCornerIndex: -1, distanceToClosestCorner: Infinity }
+            { closestCornerIndex: -1, distanceToClosestCorner: Infinity },
           );
 
           if (closestCornerIndex >= 0) {
@@ -561,7 +561,7 @@ const ROTATION_FACTOR = 0.015;
 
               ball.center.x -= Math.round(currentBallVeloictyX * velocityAdjustmentFactor);
               ball.center.y -= Math.round(
-                currentBallVeloictyY * velocityAdjustmentFactor * (currentBallVeloictyY < 0 ? -1 : 1)
+                currentBallVeloictyY * velocityAdjustmentFactor * (currentBallVeloictyY < 0 ? -1 : 1),
               );
 
               const isBallMovingAwayFromCornerX =
@@ -632,7 +632,7 @@ const ROTATION_FACTOR = 0.015;
         `w${quads.list.length}`,
         `location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=${
           CHILD_DIMENSIONS.childWidth
-        },height=${CHILD_DIMENSIONS.childHeight},left=${window.screenX - 200},top=${window.screenY + 100}`
+        },height=${CHILD_DIMENSIONS.childHeight},left=${window.screenX - 200},top=${window.screenY + 100}`,
       );
     };
 
