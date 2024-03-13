@@ -12,6 +12,10 @@ export class Point {
   translate(vector: Vector) {
     return new Point(this.x + vector.x, this.y + vector.y);
   }
+
+  distanceTo(otherPoint: Point) {
+    return Math.sqrt((this.x - otherPoint.x) ** 2 + (this.y - otherPoint.y) ** 2);
+  }
 }
 
 export class Vector {
@@ -57,7 +61,7 @@ export class Edge {
   normalizedCopy = () => {
     return new Edge(
       new Point(Math.min(this.point1.x, this.point2.x), Math.min(this.point1.y, this.point2.y)),
-      new Point(Math.max(this.point1.x, this.point2.x), Math.max(this.point1.y, this.point2.y))
+      new Point(Math.max(this.point1.x, this.point2.x), Math.max(this.point1.y, this.point2.y)),
     );
   };
 
@@ -135,11 +139,11 @@ export class Quad {
 
     const topLeftCorner = new Point(
       windowRef.screenX - world.referencePoint.x,
-      windowRef.screenY - world.referencePoint.y
+      windowRef.screenY - world.referencePoint.y,
     );
     const bottomRightCorner = new Point(
       windowRef.screenX + windowRef.innerWidth - world.referencePoint.x,
-      windowRef.screenY + windowRef.innerHeight - world.referencePoint.y
+      windowRef.screenY + windowRef.innerHeight - world.referencePoint.y,
     );
 
     this.windowRef = windowRef;
@@ -179,11 +183,11 @@ export class Quad {
   updatePosition = (newWorldReference: World["referencePoint"]) => {
     this.topLeftCorner = new Point(
       this.windowRef.screenX - newWorldReference.x,
-      this.windowRef.screenY - newWorldReference.y
+      this.windowRef.screenY - newWorldReference.y,
     );
     this.bottomRightCorner = new Point(
       this.windowRef.screenX + this.windowRef.innerWidth - newWorldReference.x,
-      this.windowRef.screenY + this.windowRef.innerHeight - newWorldReference.y
+      this.windowRef.screenY + this.windowRef.innerHeight - newWorldReference.y,
     );
   };
 

@@ -3,15 +3,18 @@ import bowlingBallImage from "../assets/bowling_ball.png";
 import tennisBallImage from "../assets/tennis_ball.png";
 import poolBallImage from "../assets/pool_ball.png";
 import antiGravityBallImage from "../assets/anti-gravity_ball.webp";
+import superBallImage from "../assets/super_ball.webp";
+import pongBallImage from "../assets/pong_ball.webp";
 
 export type BallType = {
   name: string;
 
   // Physics
   gravity: number;
-  bounceDecay: number;
+  wallCoefficientOfRestitution: number;
   orthoginalFriction: number;
   rotationFactor: number;
+  maxVelocity?: number;
 
   // Visual
   scale: number;
@@ -22,7 +25,7 @@ export const BALL_TYPES: BallType[] = [
   {
     name: "default",
     gravity: 1,
-    bounceDecay: 0.89,
+    wallCoefficientOfRestitution: 0.89,
     orthoginalFriction: 0.97,
     rotationFactor: 0.015,
     scale: 1,
@@ -30,17 +33,17 @@ export const BALL_TYPES: BallType[] = [
   },
   {
     name: "bowling",
-    gravity: 2.5,
-    bounceDecay: 0.25,
-    orthoginalFriction: 0.45,
-    rotationFactor: 0.005,
+    gravity: 3,
+    wallCoefficientOfRestitution: 0.25,
+    orthoginalFriction: 0.85,
+    rotationFactor: 0.02,
     scale: 1.1,
     imgSrc: bowlingBallImage,
   },
   {
     name: "tennis",
     gravity: 1.25,
-    bounceDecay: 0.95,
+    wallCoefficientOfRestitution: 0.95,
     orthoginalFriction: 0.99,
     rotationFactor: 0.01,
     scale: 0.5,
@@ -49,7 +52,7 @@ export const BALL_TYPES: BallType[] = [
   {
     name: "pool",
     gravity: 1.75,
-    bounceDecay: 0.25,
+    wallCoefficientOfRestitution: 0.25,
     orthoginalFriction: 0.85,
     rotationFactor: 0.01,
     scale: 0.4,
@@ -58,11 +61,30 @@ export const BALL_TYPES: BallType[] = [
   {
     name: "anti-gravity",
     gravity: -1,
-    bounceDecay: 0.89,
+    wallCoefficientOfRestitution: 0.89,
     orthoginalFriction: 0.97,
     rotationFactor: 0.015,
     scale: 1,
     imgSrc: antiGravityBallImage,
+  },
+  {
+    name: "super",
+    gravity: 1,
+    wallCoefficientOfRestitution: 1.03,
+    orthoginalFriction: 1,
+    rotationFactor: 0.015,
+    scale: 0.75,
+    imgSrc: superBallImage,
+  },
+  {
+    name: "pong",
+    gravity: 0,
+    wallCoefficientOfRestitution: 1,
+    orthoginalFriction: 1,
+    rotationFactor: 0.0,
+    scale: 0.5,
+    imgSrc: pongBallImage,
+    maxVelocity: 5,
   },
 ];
 

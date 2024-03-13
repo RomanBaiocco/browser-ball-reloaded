@@ -2,7 +2,11 @@ html,
 body {
   background: #fff;
   color: #000;
-  font: 12px/1.2 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font:
+    12px/1.2 "Helvetica Neue",
+    Helvetica,
+    Arial,
+    sans-serif;
   line-height: 0;
   margin: 0;
   overflow: hidden;
@@ -26,7 +30,7 @@ a.child {
 a.reset {
   top: 45px;
 }
-a.settings {
+a.bonus {
   top: 80px;
 }
 
@@ -39,7 +43,7 @@ body p {
   width: 200px;
 }
 
-.settingsPane {
+.bonusPanel {
   height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -48,6 +52,17 @@ body p {
 #ball-settings {
   display: flex;
   flex-direction: column;
+}
+
+#actions {
+  display: flex;
+  flex-direction: column;
+}
+
+#create-ball-warning {
+  line-height: 1rem;
+  padding-bottom: 0.5rem;
+  text-align: center;
 }
 
 button {

@@ -8,7 +8,11 @@
 body {
   background: #fff;
   color: #000;
-  font: 14px/1.4 Inter, Times, "Times New Roman", serif;
+  font:
+    14px/1.4 Inter,
+    Times,
+    "Times New Roman",
+    serif;
   margin: 0;
   padding: 0;
   display: flex;

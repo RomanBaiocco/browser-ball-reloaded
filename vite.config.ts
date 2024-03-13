@@ -15,7 +15,7 @@ export default defineConfig({
         main: resolve(__dirname, "index.html"),
         parent: resolve(__dirname, "/reloaded/parent.html"),
         child: resolve(__dirname, "/reloaded/child.html"),
-        ballSettings: resolve(__dirname, "/reloaded/settings.html"),
+        bonusFeatures: resolve(__dirname, "/reloaded/bonus.html"),
       },
     },
   },
