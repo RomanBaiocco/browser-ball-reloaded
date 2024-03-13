@@ -509,8 +509,6 @@ const ROTATION_FACTOR = 0.015;
           }
         }
 
-        // console.log({ amountOfEdgeOutOfWindow, I: edgesAtLeastPartiallyInsideWindow });
-
         if (amountOfEdgeOutOfWindow && isSideCollision) {
           // Handle hitting a side wall
           ball.handleOrthoganalCollision("x", amountOfEdgeOutOfWindow);
@@ -708,7 +706,6 @@ const ROTATION_FACTOR = 0.015;
       },
 
       removeChild: function () {
-        // @ts-expect-error - this is a BrowserballWindow but maybe not forever, so be careful
         const childWindowAgain = quads.remove(this.quadRef);
         childWindowAgain.removeEventListener("resize", onResizeWindow, false);
         childWindowAgain.removeEventListener("mousedown", ballDraggingManager.down, false);

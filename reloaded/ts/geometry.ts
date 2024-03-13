@@ -181,9 +181,6 @@ export class Quad {
    * @param newWorldReference
    */
   updatePosition = (newWorldReference: World["referencePoint"]) => {
-
-    console.log('screen', this.windowRef.screenX, this.windowRef.screenY, this.windowRef.screen.width, this.windowRef.screen.height);
-
     this.topLeftCorner = new Point(
       this.windowRef.screenX - newWorldReference.x,
       this.windowRef.screenY - newWorldReference.y

@@ -9,6 +9,13 @@ enum BallEdge {
   Left = "Left",
 }
 
+const BALL_EDGE_INDEXES = {
+  [BallEdge.Top]: 0,
+  [BallEdge.Right]: 1,
+  [BallEdge.Bottom]: 2,
+  [BallEdge.Left]: 3,
+};
+
 const BALL_COEFFICIENT_OF_RESTITUTION = 0.8;
 
 export class Ball {
@@ -80,7 +87,6 @@ export class Ball {
   };
 
   render = () => {
-    // console.debug({ ball: this });
     if (!this.dragging) {
       this.velocity.y += this.gravity;
       if (Math.abs(this.velocity.x) < Math.abs(this.gravity)) this.velocity.x = 0;
@@ -141,29 +147,28 @@ export class Ball {
       let amountOfEdgeOutOfWindow = 0;
       let edgesAtLeastPartiallyInsideWindow = 0;
 
-      let isSideCollision = false;
+      let collisionSide: BallEdge | undefined;
 
-      for (let edgeIndex = 0; edgeIndex < 4; edgeIndex++) {
-        // If the entiry of the edge is outside the world
+      for (const edge of Object.values(BallEdge)) {
+        const edgeIndex = BALL_EDGE_INDEXES[edge];
+
+        // If the entiry of the edge is outside the world it means we have an orthoganal collision
         if (ballEdgeOutsideWorld[edgeIndex] == this.width) {
+          collisionSide = edge;
           let edge1 = ballEdgeOutsideWorld[(edgeIndex + 3) % 4];
           edge1 = edge1 == this.width ? 0 : edge1;
           let edge2 = ballEdgeOutsideWorld[(edgeIndex + 1) % 4];
           edge2 = edge2 == this.width ? 0 : edge2;
           const edgeOutOfWindow = edge1 > edge2 ? edge1 : edge2;
-          if (edgeOutOfWindow > amountOfEdgeOutOfWindow) {
-            amountOfEdgeOutOfWindow = edgeOutOfWindow;
-            isSideCollision = edgeIndex % 2 == 1;
-          }
+          if (edgeOutOfWindow > amountOfEdgeOutOfWindow) amountOfEdgeOutOfWindow = edgeOutOfWindow;
         } else {
           edgesAtLeastPartiallyInsideWindow++;
         }
       }
 
-      if (amountOfEdgeOutOfWindow && isSideCollision) {
-        this.handleOrthoganalCollision("x", amountOfEdgeOutOfWindow);
-      } else if (amountOfEdgeOutOfWindow && !isSideCollision) {
-        this.handleOrthoganalCollision("y", amountOfEdgeOutOfWindow);
+      if (collisionSide) {
+        // console.log("collisionSide", collisionSide);
+        this.handleOrthoganalCollision(collisionSide, amountOfEdgeOutOfWindow);
       } else if (edgesAtLeastPartiallyInsideWindow !== 3) {
         // Handle hitting a corner
         const { closestCornerIndex, distanceToClosestCorner } = this.world.corners.reduce(
@@ -189,10 +194,12 @@ export class Ball {
           if ((isBallInsideOfCornerX || isBallInsideOfCornerY) && !(isBallInsideOfCornerX && isBallInsideOfCornerY)) {
             if (isBallInsideOfCornerX) {
               const verticalDistanceFromCorner = this.radius - Math.abs(this.center.y - closestCorner.y);
-              this.handleOrthoganalCollision("y", verticalDistanceFromCorner);
+              const collisionSide = this.center.y > closestCorner.y ? BallEdge.Top : BallEdge.Bottom;
+              this.handleOrthoganalCollision(collisionSide, verticalDistanceFromCorner);
             } else {
               const horizontalDistanceFromCorner = this.radius - Math.abs(this.center.x - closestCorner.x);
-              this.handleOrthoganalCollision("x", horizontalDistanceFromCorner);
+              const collisionSide = this.center.x > closestCorner.x ? BallEdge.Left : BallEdge.Right;
+              this.handleOrthoganalCollision(collisionSide, horizontalDistanceFromCorner);
             }
           } else if (distanceToClosestCorner < this.radius) {
             // Hit corner in a way that the ceneter of the ball is entirely inside or outside the corner
@@ -233,15 +240,19 @@ export class Ball {
 
   /**
    * Handles a collision with a wall
-   * @param { "x" | "y" } direction - The direction of the collision
+   * @param { BallEdge } collisionSide - The side of the ball that is colliding with the wall
+   * @param { number } adjustment - The amount of the ball that is inside the wall
    **/
-  handleOrthoganalCollision = (direction: "x" | "y", adjustment: number) => {
-    const collisionAxis = direction;
-    const orthoganalAxis = direction === "x" ? "y" : "x";
+  handleOrthoganalCollision = (collisionSide: BallEdge, adjustment: number) => {
+    const [collisionAxis, orthoganalAxis] = [BallEdge.Top, BallEdge.Bottom].includes(collisionSide)
+      ? (["y", "x"] as const)
+      : (["x", "y"] as const);
 
-    this.center[collisionAxis] -= adjustment * (this.velocity[collisionAxis] < 0 ? -1 : 1);
-    // Don't make this adjustment if the ball is moving vertically and is moving slowly
-    if (collisionAxis === "x" || Math.abs(this.velocity.y) > Math.abs(this.gravity)) {
+    const collisionAxisAdjustmentSign = [BallEdge.Top, BallEdge.Left].includes(collisionSide) ? 1 : -1;
+
+    this.center[collisionAxis] += adjustment * collisionAxisAdjustmentSign;
+
+    if (Math.abs(this.velocity.y) > Math.abs(this.gravity)) {
       this.center[orthoganalAxis] -=
         Math.round((adjustment * this.velocity[orthoganalAxis]) / this.velocity[collisionAxis]) *
         (this.velocity[orthoganalAxis] < 0 ? -1 : 1);
