@@ -29,24 +29,22 @@
         window.open(
           "reloaded/parent.html",
           null,
-          `location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=${width},height=${height},left=${left},top=${top}`
+          `location=no,status=no,menubar=no,toolbar=no,scrollbars=no,status=no,width=${width},height=${height},left=${left},top=${top}`,
         );
         return false;
       }
     </script>
   </head>
   <body>
-    <div class="container">
-      <div class="header">
-        <h1 class="title">Browser Ball Reloaded</h1>
-        <h2 class="tagline"><i>Definitely</i> more cool than you think it will be</h2>
-      </div>
+    <div id="container">
+      <header id="header">
+        <h1 id="title">Browser Ball Reloaded</h1>
+        <h2 id="tagline"><i>Definitely</i> more cool than you think it will be</h2>
+      </header>
 
-      <div class="warning-callout">
-        Important note! You need to be on a desktop browser that supports multiple windows (sorry Arc).<br
-          class="warning-callout-line-break"
-        />
-        This <i>will not</i> work on a mobile device.
+      <div id="warning-callout">
+        <div>Important note! You need to be on a desktop browser that supports multiple windows (sorry Arc)</div>
+        <div id="mobile-warning">This <i>will not</i> work on a mobile device</div>
       </div>
 
       <div id="content">
@@ -73,7 +71,7 @@
           you're interested in understanding how it works, you can
           <a href="https://github.com/RomanBaiocco/browser-ball-reloaded">view the source code on github</a>.
         </p>
-        <p class="archive-link">
+        <p id="archive-link">
           <a href="https://web.archive.org/web/20160531203657/http://weareinstrument.com/ball/">
             If you'd like to see the original Browser Ball in all its glory, you can view it here
           </a>
@@ -93,14 +91,14 @@
         Launch Browser Ball Reloaded
       </button>
 
-      <div id="footer">
-        <div class="attribution">
+      <footer id="footer">
+        <div id="attribution">
           <p>
             Originally created by Mark Mahoney.<br />Remastered by
             <a href="https://github.com/RomanBaiocco">Roman Baiocco</a>.
           </p>
         </div>
-        <div class="github-logo">
+        <div id="github-logo">
           <a
             href="https://github.com/RomanBaiocco/browser-ball-reloaded"
             aria-label="View source on GitHub"
@@ -116,7 +114,7 @@
             </svg>
           </a>
         </div>
-      </div>
+      </footer>
     </div>
   </body>
 </html>

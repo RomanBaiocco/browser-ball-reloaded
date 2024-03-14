@@ -43,7 +43,18 @@ body p {
   width: 200px;
 }
 
-.bonusPanel {
+button {
+  background: #ccc;
+  border: 2px solid #333;
+  color: #000;
+  cursor: pointer;
+  font: inherit;
+  line-height: 1;
+  padding: 5px;
+  text-decoration: none;
+}
+
+#bonus-panel {
   height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -63,15 +74,4 @@ body p {
   line-height: 1rem;
   padding-bottom: 0.5rem;
   text-align: center;
-}
-
-button {
-  background: #ccc;
-  border: 2px solid #333;
-  color: #000;
-  cursor: pointer;
-  font: inherit;
-  line-height: 1;
-  padding: 5px;
-  text-decoration: none;
 }
