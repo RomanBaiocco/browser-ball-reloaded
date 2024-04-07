@@ -1,4 +1,4 @@
-# [Browser Ball Reloaded](https://romanbaiocco.github.io/browser-ball-reloaded/)
+# [Browser Ball Reloaded](https://www.browserball.xyz/)
 
 A rewrite of [Browser Ball by Mark Mahoney](https://experiments.withgoogle.com/browser-ball).
 

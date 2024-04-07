@@ -8,7 +8,7 @@ if (process.env.GITHUB_PAGES === "true") {
 }
 
 export default defineConfig({
-  base: process.env.GITHUB_PAGES === "true" ? "/browser-ball-reloaded/" : "/",
+  base: "/",
   build: {
     rollupOptions: {
       input: {
